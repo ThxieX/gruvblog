@@ -5,7 +5,7 @@ date: 2018-07-16
 categories:
   - Personal
 tags:
-  - OKR
+  - Thinking
 excerpt: "学习并应用 OKR（目标与关键成果法）进行年中总结，制定可度量的关键结果，年终进行检验。"
 aiSummary: "本文记录了作者学习并应用 OKR（Objectives and Key Results）方法进行年中总结的实践。OKR 是目标与关键成果法，包含目标（O）和关键结果（KR）两个核心要素。文章介绍了 OKR 的基本概念和制定方法，并结合作者自身情况制定了详细的学习、工作、个人成长等方面的 OKR 目标计划，将大目标分解为可度量的关键结果，为年终复盘提供依据。"
 ---
