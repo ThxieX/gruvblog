@@ -151,19 +151,21 @@ function MessageBlock({ message, locale, isStreaming = false }: { message: Messa
   return (
     <div className="py-6 bg-secondary/30">
       <div className="max-w-3xl mx-auto px-4">
-        {/* Sources - show above answer like Perplexity */}
-        {message.sources && message.sources.length > 0 && (
-          <Sources sources={message.sources} locale={locale} />
-        )}
-        
         {/* Answer */}
         <div className="prose-sm prose-gruvbox [&_p]:mb-3 [&_p:last-child]:mb-0 [&_pre]:my-4 [&_ul]:my-3 [&_ol]:my-3 [&_li]:my-1">
           <MarkdownRenderer content={message.content} />
         </div>
         
+        {/* Sources - show below answer */}
+        {message.sources && message.sources.length > 0 && (
+          <div className="mt-4">
+            <Sources sources={message.sources} locale={locale} />
+          </div>
+        )}
+        
         {/* Actions */}
         {!isStreaming && message.content && (
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-3 flex items-center gap-2">
             <button
               onClick={handleCopy}
               className="flex items-center gap-1.5 px-2 py-1 text-xs text-muted-foreground hover:text-foreground hover:bg-secondary rounded transition-colors"
@@ -417,9 +419,9 @@ export default function AIChatPage() {
   const questions = suggestedQuestions[locale as keyof typeof suggestedQuestions] || suggestedQuestions.en
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-screen flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border">
+      <header className="shrink-0 bg-background/80 backdrop-blur-sm border-b border-border">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link 
             href="/"
@@ -445,8 +447,8 @@ export default function AIChatPage() {
         </div>
       </header>
 
-      {/* Main content */}
-      <main className="flex-1 overflow-y-auto">
+      {/* Main content - scrollable area */}
+      <main className="flex-1 overflow-y-auto min-h-0">
         {messages.length === 0 ? (
           /* Empty state */
           <div className="max-w-3xl mx-auto px-4 py-16 sm:py-24">
@@ -489,13 +491,17 @@ export default function AIChatPage() {
             {isLoading && (streamingContent || currentSources.length > 0) && (
               <div className="py-6 bg-secondary/30">
                 <div className="max-w-3xl mx-auto px-4">
-                  {currentSources.length > 0 && (
-                    <Sources sources={currentSources} locale={locale} />
-                  )}
                   {streamingContent ? (
-                    <div className="prose-sm prose-gruvbox [&_p]:mb-3 [&_p:last-child]:mb-0 [&_pre]:my-4 [&_ul]:my-3 [&_ol]:my-3 [&_li]:my-1">
-                      <MarkdownRenderer content={streamingContent} />
-                    </div>
+                    <>
+                      <div className="prose-sm prose-gruvbox [&_p]:mb-3 [&_p:last-child]:mb-0 [&_pre]:my-4 [&_ul]:my-3 [&_ol]:my-3 [&_li]:my-1">
+                        <MarkdownRenderer content={streamingContent} />
+                      </div>
+                      {currentSources.length > 0 && (
+                        <div className="mt-4">
+                          <Sources sources={currentSources} locale={locale} />
+                        </div>
+                      )}
+                    </>
                   ) : (
                     <TypingIndicator />
                   )}
@@ -517,8 +523,8 @@ export default function AIChatPage() {
         )}
       </main>
 
-      {/* Input area - fixed at bottom */}
-      <footer className="sticky bottom-0 bg-background border-t border-border">
+      {/* Input area - always at bottom */}
+      <footer className="shrink-0 bg-background border-t border-border">
         <div className="max-w-3xl mx-auto px-4 py-4">
           <form onSubmit={handleSubmit} className="relative">
             <textarea
