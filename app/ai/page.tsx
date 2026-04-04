@@ -461,12 +461,9 @@ export default function AIChatPage() {
         <div className="min-h-[400px] max-h-[500px] overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-8">
                 <Sparkles className="h-8 w-8 text-primary" />
               </div>
-              <p className="text-muted-foreground mb-8 text-sm">
-                {t('ai.placeholder')}
-              </p>
               
               {/* Suggested questions as cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto">

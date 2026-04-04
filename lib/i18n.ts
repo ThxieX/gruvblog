@@ -92,7 +92,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'ai.stop': 'Stop',
     'ai.error': 'Sorry, something went wrong. Please try again.',
     'ai.sources': 'Referenced Articles',
-    'ai.disclaimer': 'AI responses are generated based on blog content and may not always be accurate.',
+    'ai.disclaimer': 'AI-generated, may be inaccurate',
 
     // Comments
     // Footer
@@ -189,7 +189,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'ai.stop': '停止',
     'ai.error': '抱歉，出了点问题。请重试。',
     'ai.sources': '引用来源',
-    'ai.disclaimer': 'AI 回复基于博客内容生成，可能不完全准确。',
+    'ai.disclaimer': 'AI 生成，仅供参考',
 
     // Command Menu
     'cmd.search': '搜索...',
@@ -278,7 +278,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'ai.stop': '停止',
     'ai.error': '申し訳ありません、エラーが発生しました。再試行してください。',
     'ai.sources': '参照記事',
-    'ai.disclaimer': 'AI回答はブログコンテンツに基づいて生成され、常に正確とは限りません。',
+    'ai.disclaimer': 'AI生成、参考程度に',
 
     // Command Menu
     'cmd.search': '検索...',
@@ -288,7 +288,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     'cmd.posts': '記事',
     'cmd.categories': 'カテゴリー',
     'cmd.tags': 'タグ',
-    'cmd.actions': 'アクション',
+    'cmd.actions': 'ア��ション',
     'cmd.toggleTheme': 'テーマを切り替え',
     'cmd.viewAll': 'すべて表示',
     'cmd.searchCategories': 'カテゴリーを検索...',
