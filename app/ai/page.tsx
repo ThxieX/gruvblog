@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Send, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-react'
+import { ArrowLeft, Send, Square, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n-context'
 
 // Cloudflare AI Search Public Endpoint
@@ -136,8 +136,10 @@ export default function AIChatPage() {
       }
       setMessages(prev => [...prev, assistantMessage])
       setStreamingContent('')
+      setIsLoading(false)
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
+        // Handled by stopGeneration, don't do anything here
         return
       }
       console.error('Chat error:', error)
@@ -147,11 +149,30 @@ export default function AIChatPage() {
         content: t('ai.error') || 'Sorry, something went wrong. Please try again.',
       }
       setMessages(prev => [...prev, errorMessage])
-    } finally {
       setIsLoading(false)
       setStreamingContent('')
     }
   }, [messages, isLoading, t])
+
+  // Stop generation and keep already streamed content
+  const stopGeneration = useCallback(() => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    
+    // Save the streamed content as a message if any
+    if (streamingContent) {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: streamingContent,
+      }
+      setMessages(prev => [...prev, assistantMessage])
+    }
+    
+    setIsLoading(false)
+    setStreamingContent('')
+  }, [streamingContent])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -301,8 +322,7 @@ export default function AIChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t('ai.placeholder')}
-              disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
             {messages.length > 0 && (
               <button
@@ -314,17 +334,24 @@ export default function AIChatPage() {
                 <Trash2 className="h-5 w-5" />
               </button>
             )}
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
+            {isLoading ? (
+              <button
+                type="button"
+                onClick={stopGeneration}
+                className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg font-medium hover:bg-destructive/90 transition-colors"
+                title={t('ai.stop') || 'Stop generating'}
+              >
+                <Square className="h-5 w-5 fill-current" />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!input.trim()}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <Send className="h-5 w-5" />
-              )}
-            </button>
+              </button>
+            )}
           </form>
           <p className="text-xs text-muted-foreground mt-2">
             {t('ai.disclaimer')}
