@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Send, Square, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-react'
+import { ArrowLeft, Send, Square, Sparkles, User, Bot, Loader2, Trash2, FileText, ExternalLink } from 'lucide-react'
 import { useI18n } from '@/lib/i18n-context'
 import { MarkdownRenderer } from '@/components/markdown-renderer'
 
@@ -15,6 +15,102 @@ interface Message {
   id: string
   role: 'user' | 'assistant'
   content: string
+  sources?: Source[]
+}
+
+interface Source {
+  id: string
+  score: number
+  text: string
+  item: {
+    key: string
+    metadata?: Record<string, unknown>
+    timestamp?: number
+  }
+}
+
+// Helper function to generate post URL from source key
+function getSourceUrl(key: string): string | null {
+  // Handle different key formats from Cloudflare AI Search
+  // e.g., "posts/my-article.md", "content/posts/slug.mdx", "slug"
+  const match = key.match(/(?:posts\/)?([^/]+?)(?:\.mdx?)?$/i)
+  if (match) {
+    const slug = match[1]
+    return `/posts/${slug}`
+  }
+  return null
+}
+
+// Helper function to format score as percentage
+function formatScore(score: number): string {
+  return `${Math.round(score * 100)}%`
+}
+
+// Helper function to extract title from source
+function getSourceTitle(source: Source): string {
+  // Try to get title from metadata first
+  if (source.item.metadata && typeof source.item.metadata.title === 'string') {
+    return source.item.metadata.title
+  }
+  // Fall back to key-based title
+  const key = source.item.key
+  const match = key.match(/(?:posts\/)?([^/]+?)(?:\.mdx?)?$/i)
+  if (match) {
+    // Convert slug to readable title
+    return match[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+  }
+  return key
+}
+
+// Sources card component
+function SourcesCard({ sources, locale }: { sources: Source[], locale: string }) {
+  if (sources.length === 0) return null
+  
+  const labels = {
+    en: 'Referenced Articles',
+    'zh-CN': '引用来源',
+    ja: '参照記事',
+  }
+  const label = labels[locale as keyof typeof labels] || labels.en
+  
+  return (
+    <div className="mt-3 pt-3 border-t border-border/50">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+        <FileText className="h-3 w-3" />
+        <span>{label}</span>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {sources.slice(0, 5).map((source) => {
+          const url = getSourceUrl(source.item.key)
+          const title = getSourceTitle(source)
+          
+          if (url) {
+            return (
+              <Link
+                key={source.id}
+                href={url}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-background/50 border border-border/50 rounded-md hover:bg-primary/10 hover:border-primary/30 transition-colors group"
+              >
+                <span className="truncate max-w-[150px]" title={title}>{title}</span>
+                <span className="text-muted-foreground/60">{formatScore(source.score)}</span>
+                <ExternalLink className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary/60" />
+              </Link>
+            )
+          }
+          
+          return (
+            <span
+              key={source.id}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-background/50 border border-border/50 rounded-md"
+            >
+              <span className="truncate max-w-[150px]" title={title}>{title}</span>
+              <span className="text-muted-foreground/60">{formatScore(source.score)}</span>
+            </span>
+          )
+        })}
+      </div>
+    </div>
+  )
 }
 
 const suggestedQuestions = {
@@ -43,6 +139,7 @@ export default function AIChatPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [streamingContent, setStreamingContent] = useState('')
+  const [currentSources, setCurrentSources] = useState<Source[]>([])
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
   const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null)
@@ -77,18 +174,17 @@ export default function AIChatPage() {
     setMessages(prev => [...prev, userMessage])
     setIsLoading(true)
     setStreamingContent('')
+    setCurrentSources([])
 
     try {
+      // Single-turn conversation: only send current user message
       const response = await fetch(AI_SEARCH_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [...messages, userMessage].map(m => ({
-            role: m.role,
-            content: m.content,
-          })),
+          messages: [{ role: 'user', content: text.trim() }],
           stream: true,
         }),
         signal: abortControllerRef.current.signal,
@@ -104,6 +200,8 @@ export default function AIChatPage() {
 
       const decoder = new TextDecoder()
       let fullContent = ''
+      let sources: Source[] = []
+      let currentEventType = ''
 
       while (true) {
         const { done, value } = await reader.read()
@@ -114,13 +212,33 @@ export default function AIChatPage() {
 
         for (const line of lines) {
           const trimmed = line.trim()
+          
+          // Track event type
+          if (trimmed.startsWith('event:')) {
+            currentEventType = trimmed.slice(6).trim()
+            continue
+          }
+          
           if (trimmed.startsWith('data:')) {
             const data = trimmed.slice(5).trim()
             if (data === '[DONE]') continue
+            
             try {
               const parsed = JSON.parse(data)
-              const delta = parsed.choices?.[0]?.delta?.content
-              if (delta) {
+              
+              // Handle chunks event (RAG sources)
+              if (currentEventType === 'chunks' && Array.isArray(parsed)) {
+                sources = parsed.map((chunk: Source) => ({
+                  id: chunk.id,
+                  score: chunk.score,
+                  text: chunk.text,
+                  item: chunk.item,
+                }))
+                setCurrentSources(sources)
+              }
+              // Handle regular chat completion delta
+              else if (parsed.choices?.[0]?.delta?.content) {
+                const delta = parsed.choices[0].delta.content
                 fullContent += delta
                 setStreamingContent(fullContent)
               }
@@ -131,11 +249,12 @@ export default function AIChatPage() {
         }
       }
 
-      // Add assistant message when done
+      // Add assistant message when done, include sources
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: fullContent,
+        sources: sources.length > 0 ? sources : undefined,
       }
       setMessages(prev => [...prev, assistantMessage])
       setStreamingContent('')
@@ -156,7 +275,7 @@ export default function AIChatPage() {
       setIsLoading(false)
       setStreamingContent('')
     }
-  }, [messages, isLoading, t])
+  }, [isLoading, t])
 
   // Stop generation and keep already streamed content
   const stopGeneration = useCallback(async () => {
@@ -182,13 +301,15 @@ export default function AIChatPage() {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: streamingContent,
+        sources: currentSources.length > 0 ? currentSources : undefined,
       }
       setMessages(prev => [...prev, assistantMessage])
     }
     
     setIsLoading(false)
     setStreamingContent('')
-  }, [streamingContent])
+    setCurrentSources([])
+  }, [streamingContent, currentSources])
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -287,9 +408,14 @@ export default function AIChatPage() {
                     }`}
                   >
                     {message.role === 'assistant' ? (
-                      <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
-                        <MarkdownRenderer content={message.content} />
-                      </div>
+                      <>
+                        <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
+                          <MarkdownRenderer content={message.content} />
+                        </div>
+                        {message.sources && message.sources.length > 0 && (
+                          <SourcesCard sources={message.sources} locale={locale} />
+                        )}
+                      </>
                     ) : (
                       <div className="whitespace-pre-wrap">
                         {message.content}
@@ -315,6 +441,9 @@ export default function AIChatPage() {
                     <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
                       <MarkdownRenderer content={streamingContent} />
                     </div>
+                    {currentSources.length > 0 && (
+                      <SourcesCard sources={currentSources} locale={locale} />
+                    )}
                   </div>
                 </div>
               )}

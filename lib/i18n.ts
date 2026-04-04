@@ -89,6 +89,9 @@ export const translations: Record<Locale, Record<string, string>> = {
     'ai.subtitle': 'Have a question about the blog or AI? Ask away.',
     'ai.placeholder': 'Ask me anything about AI, programming, or this blog...',
     'ai.clear': 'Clear',
+    'ai.stop': 'Stop',
+    'ai.error': 'Sorry, something went wrong. Please try again.',
+    'ai.sources': 'Referenced Articles',
     'ai.disclaimer': 'AI responses are generated based on blog content and may not always be accurate.',
 
     // Comments
@@ -179,11 +182,14 @@ export const translations: Record<Locale, Record<string, string>> = {
     'links.apply.description': '如果你有博客并且想交换链接，请随时联系我！',
 
     // AI
-    // Comments
-    // Footer
-    // Theme
-    // Vim
-    // Confetti
+    'ai.title': 'AI 问答',
+    'ai.subtitle': '有关于博客或 AI 的问题？尽管问。',
+    'ai.placeholder': '问我任何关于 AI、编程或本博客的问题...',
+    'ai.clear': '清除',
+    'ai.stop': '停止',
+    'ai.error': '抱歉，出了点问题。请重试。',
+    'ai.sources': '引用来源',
+    'ai.disclaimer': 'AI 回复基于博客内容生成，可能不完全准确。',
 
     // Command Menu
     'cmd.search': '搜索...',
@@ -265,11 +271,14 @@ export const translations: Record<Locale, Record<string, string>> = {
     'links.apply.description': 'ブログをお持ちでリンク交換を希望される場合は、お気軽にご連絡ください！',
 
     // AI
-    // Comments
-    // Footer
-    // Theme
-    // Vim
-    // Confetti
+    'ai.title': 'AIに質問',
+    'ai.subtitle': 'ブログやAIについて質問がありますか？どうぞ。',
+    'ai.placeholder': 'AI、プログラミング、このブログについて何でも聞いてください...',
+    'ai.clear': 'クリア',
+    'ai.stop': '停止',
+    'ai.error': '申し訳ありません、エラーが発生しました。再試行してください。',
+    'ai.sources': '参照記事',
+    'ai.disclaimer': 'AI回答はブログコンテンツに基づいて生成され、常に正確とは限りません。',
 
     // Command Menu
     'cmd.search': '検索...',
