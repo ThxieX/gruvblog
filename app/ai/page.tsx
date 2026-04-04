@@ -6,7 +6,9 @@ import { ArrowLeft, Send, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-re
 import { useI18n } from '@/lib/i18n-context'
 
 // Cloudflare AI Search Public Endpoint
-const AI_SEARCH_URL = 'https://4ce2027e-3c3e-498f-bd03-2dc4cd8c3d3a.search.ai.cloudflare.com/chat/completions'
+const AI_SEARCH_URL = process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL
+  ? `${process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL}/chat/completions`
+  : null
 
 interface Message {
   id: string
@@ -47,6 +49,16 @@ export default function AIChatPage() {
   // Send message to Cloudflare AI Search
   const sendMessage = useCallback(async (text: string) => {
     if (!text.trim() || isLoading) return
+
+    if (!AI_SEARCH_URL) {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: 'AI Search is not configured. Please set NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL environment variable.',
+      }
+      setMessages(prev => [...prev, errorMessage])
+      return
+    }
 
     // Cancel any ongoing request
     if (abortControllerRef.current) {
