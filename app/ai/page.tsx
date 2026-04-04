@@ -1,11 +1,21 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
-import { useChat } from '@ai-sdk/react'
-import { DefaultChatTransport } from 'ai'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Send, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-react'
+import { ArrowLeft, Send, Square, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n-context'
+import { MarkdownRenderer } from '@/components/markdown-renderer'
+
+// Cloudflare AI Search Public Endpoint
+const AI_SEARCH_URL = process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL
+  ? `${process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL}/chat/completions`
+  : null
+
+interface Message {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+}
 
 const suggestedQuestions = {
   en: [
@@ -30,30 +40,171 @@ const suggestedQuestions = {
 
 export default function AIChatPage() {
   const [input, setInput] = useState('')
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const [streamingContent, setStreamingContent] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const abortControllerRef = useRef<AbortController | null>(null)
+  const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null)
   const { t, locale } = useI18n()
-  
-  const { messages, sendMessage, status, setMessages } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
-  })
 
-  const isLoading = status === 'streaming' || status === 'submitted'
+  // Send message to Cloudflare AI Search
+  const sendMessage = useCallback(async (text: string) => {
+    if (!text.trim() || isLoading) return
+
+    if (!AI_SEARCH_URL) {
+      const errorMessage: Message = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: 'AI Search is not configured. Please set NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL environment variable.',
+      }
+      setMessages(prev => [...prev, errorMessage])
+      return
+    }
+
+    // Cancel any ongoing request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+    }
+    abortControllerRef.current = new AbortController()
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: text.trim(),
+    }
+
+    setMessages(prev => [...prev, userMessage])
+    setIsLoading(true)
+    setStreamingContent('')
+
+    try {
+      const response = await fetch(AI_SEARCH_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messages: [...messages, userMessage].map(m => ({
+            role: m.role,
+            content: m.content,
+          })),
+          stream: true,
+        }),
+        signal: abortControllerRef.current.signal,
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const reader = response.body?.getReader()
+      if (!reader) throw new Error('No response body')
+      readerRef.current = reader
+
+      const decoder = new TextDecoder()
+      let fullContent = ''
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+
+        const chunk = decoder.decode(value, { stream: true })
+        const lines = chunk.split('\n')
+
+        for (const line of lines) {
+          const trimmed = line.trim()
+          if (trimmed.startsWith('data:')) {
+            const data = trimmed.slice(5).trim()
+            if (data === '[DONE]') continue
+            try {
+              const parsed = JSON.parse(data)
+              const delta = parsed.choices?.[0]?.delta?.content
+              if (delta) {
+                fullContent += delta
+                setStreamingContent(fullContent)
+              }
+            } catch {
+              // Skip invalid JSON
+            }
+          }
+        }
+      }
+
+      // Add assistant message when done
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: fullContent,
+      }
+      setMessages(prev => [...prev, assistantMessage])
+      setStreamingContent('')
+      setIsLoading(false)
+      readerRef.current = null
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        // Handled by stopGeneration, don't do anything here
+        return
+      }
+      console.error('Chat error:', error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: t('ai.error') || 'Sorry, something went wrong. Please try again.',
+      }
+      setMessages(prev => [...prev, errorMessage])
+      setIsLoading(false)
+      setStreamingContent('')
+    }
+  }, [messages, isLoading, t])
+
+  // Stop generation and keep already streamed content
+  const stopGeneration = useCallback(async () => {
+    // Cancel the reader first to properly close the connection
+    if (readerRef.current) {
+      try {
+        await readerRef.current.cancel()
+      } catch {
+        // Ignore cancel errors
+      }
+      readerRef.current = null
+    }
+    
+    // Then abort the fetch request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort()
+      abortControllerRef.current = null
+    }
+    
+    // Save the streamed content as a message if any
+    if (streamingContent) {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: streamingContent,
+      }
+      setMessages(prev => [...prev, assistantMessage])
+    }
+    
+    setIsLoading(false)
+    setStreamingContent('')
+  }, [streamingContent])
 
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
+  }, [messages, streamingContent])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim() || isLoading) return
-    sendMessage({ text: input })
+    sendMessage(input)
     setInput('')
   }
 
   const handleSuggestedQuestion = (question: string) => {
     if (isLoading) return
-    sendMessage({ text: question })
+    sendMessage(question)
   }
 
   const handleClear = () => {
@@ -135,19 +286,15 @@ export default function AIChatPage() {
                         : 'bg-secondary text-secondary-foreground'
                     }`}
                   >
-                    {message.parts.map((part, index) => {
-                      if (part.type === 'text') {
-                        return (
-                          <div 
-                            key={index} 
-                            className="prose-sm prose-gruvbox whitespace-pre-wrap"
-                          >
-                            {part.text}
-                          </div>
-                        )
-                      }
-                      return null
-                    })}
+                    {message.role === 'assistant' ? (
+                      <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
+                        <MarkdownRenderer content={message.content} />
+                      </div>
+                    ) : (
+                      <div className="whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+                    )}
                   </div>
                   
                   {message.role === 'user' && (
@@ -158,7 +305,22 @@ export default function AIChatPage() {
                 </div>
               ))}
               
-              {isLoading && messages[messages.length - 1]?.role === 'user' && (
+              {/* Streaming response */}
+              {isLoading && streamingContent && (
+                <div className="flex gap-3 justify-start">
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <Bot className="h-4 w-4 text-primary" />
+                  </div>
+                  <div className="max-w-[80%] px-4 py-2 rounded-lg bg-secondary text-secondary-foreground">
+                    <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
+                      <MarkdownRenderer content={streamingContent} />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Loading indicator */}
+              {isLoading && !streamingContent && (
                 <div className="flex gap-3 justify-start">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <Bot className="h-4 w-4 text-primary" />
@@ -182,8 +344,7 @@ export default function AIChatPage() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t('ai.placeholder')}
-              disabled={isLoading}
-              className="flex-1 px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-input border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
             {messages.length > 0 && (
               <button
@@ -195,17 +356,24 @@ export default function AIChatPage() {
                 <Trash2 className="h-5 w-5" />
               </button>
             )}
-            <button
-              type="submit"
-              disabled={!input.trim() || isLoading}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <Loader2 className="h-5 w-5 animate-spin" />
-              ) : (
+            {isLoading ? (
+              <button
+                type="button"
+                onClick={stopGeneration}
+                className="px-4 py-2 bg-destructive text-destructive-foreground rounded-lg font-medium hover:bg-destructive/90 transition-colors"
+                title={t('ai.stop') || 'Stop generating'}
+              >
+                <Square className="h-5 w-5 fill-current" />
+              </button>
+            ) : (
+              <button
+                type="submit"
+                disabled={!input.trim()}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
                 <Send className="h-5 w-5" />
-              )}
-            </button>
+              </button>
+            )}
           </form>
           <p className="text-xs text-muted-foreground mt-2">
             {t('ai.disclaimer')}
