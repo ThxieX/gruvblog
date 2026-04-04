@@ -11,7 +11,7 @@ English | [简体中文](./README.zh-CN.md)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[Preview](https://thxie.com) · [Documentation](#configuration) · [Report Bug](https://github.com/ThxieX/v0-gruvbox-blog/issues)
+[Preview](https://thxie.com) · [Documentation](#configuration) · [Report Bug](https://github.com/ThxieX/gruvblog/issues)
 
 </div>
 
@@ -40,7 +40,7 @@ English | [简体中文](./README.zh-CN.md)
 - 🎨 **Multi-theme** — Gruvbox (Light/Dark/Soft/High Contrast) + Catppuccin
 - 🌍 **i18n Ready** — English, Chinese, Japanese out of the box
 - 💬 **Comments** — GitHub Discussions powered by Giscus
-- 🤖 **AI Chat** — Built-in AI assistant (optional)
+- 🤖 **AI Chat** — RAG-powered assistant built on Cloudflare AI Search (optional)
 - 📡 **RSS Feed** — Auto-generated feed for subscribers
 - 🔍 **SEO Optimized** — Dynamic sitemap, robots.txt, Open Graph
 
@@ -52,7 +52,7 @@ English | [简体中文](./README.zh-CN.md)
 | Styling | [Tailwind CSS 4](https://tailwindcss.com/) |
 | UI Components | [shadcn/ui](https://ui.shadcn.com/) |
 | Comments | [Giscus](https://giscus.app/) |
-| AI | [Vercel AI SDK](https://sdk.vercel.ai/) |
+| AI | [Cloudflare AI Search](https://developers.cloudflare.com/ai-search/) (AutoRAG) |
 | Language | [TypeScript 5.7](https://www.typescriptlang.org/) |
 
 ## 🚀 Quick Start
@@ -66,8 +66,8 @@ English | [简体中文](./README.zh-CN.md)
 
 ```bash
 # Clone the repository
-git clone https://github.com/ThxieX/v0-gruvbox-blog.git
-cd v0-gruvbox-blog
+git clone https://github.com/ThxieX/gruvblog.git
+cd gruvblog
 
 # Install dependencies
 pnpm install
@@ -80,6 +80,8 @@ Open [http://localhost:3000](http://localhost:3000) to see your blog.
 
 ## ⚙️ Configuration
 
+### Site Config (Core)
+
 Edit `lib/config/site.config.ts` — this is the **only file** you need to modify:
 
 ```typescript
@@ -88,13 +90,18 @@ export const siteConfig: Config = {
     name: 'Your Name',
     email: 'your@email.com',
     github: 'https://github.com/yourusername',
+    twitter: 'https://twitter.com/yourusername',
   },
   site: {
     title: 'Your Blog Title',
     description: 'Your site description',
     url: 'https://yourdomain.com',
+    locale: 'en_US', // Default locale (e.g., en_US, zh_CN, ja_JP)
+    keywords: ['tech', 'programming', 'tutorial'], // SEO keywords 
+    footerText: '© 2026 · Your Name · All rights reserved.', // Custom footer text  
   },
-  // Comments - Get values from https://giscus.app
+  
+  // Comments (Optional) - Get values from https://giscus.app
   comments: {
     enabled: true,
     repo: 'yourusername/your-repo',
@@ -104,6 +111,34 @@ export const siteConfig: Config = {
   },
 }
 ```
+
+### AI Assistant (Optional)
+
+> You can choose not to enable this feature or use a different integration. 
+> 
+> This project uses [Cloudflare AI Search](https://developers.cloudflare.com/ai-search/usage/) (Beta).
+
+Enable RAG-powered AI chat via Cloudflare AI Search with your preferred integration:
+
+- Workers Binding
+- REST API
+- Public Endpoint
+
+For example, Public Endpoint:
+```bash
+# Environment variable for Cloudflare AI Search endpoint
+NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL=https://<INSTANCE_ID>.search.ai.cloudflare.com
+```
+
+Supported data sources:
+- **R2 Bucket**: Connect a Cloudflare R2 bucket to index stored documents.
+- **Website**: Connect your domain to enable website page indexing.
+
+> This project auto-generates `/robots.txt` and `/sitemap.xml` at build time, suitable for standard Website crawling.
+>
+> See: [Cloudflare Docs#how-website-crawling-works](https://developers.cloudflare.com/ai-search/configuration/data-source/website/#how-website-crawling-works)
+
+
 
 ## 📝 Writing Posts
 
@@ -178,7 +213,7 @@ content/posts/
 
 > Deploy to Vercel with one click
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ThxieX/v0-gruvbox-blog)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ThxieX/gruvblog)
 
 ### Manual Build
 
@@ -210,7 +245,7 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
-<a href="https://v0.app/chat/api/kiro/clone/ThxieX/v0-gruvbox-blog" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+<a href="https://v0.app/chat/api/kiro/clone/ThxieX/gruvblog" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
 ---
 
 <div align="center">
@@ -220,5 +255,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Made with ❤️ by [Thxie](https://github.com/ThxieX)
 
 </div>
-
-

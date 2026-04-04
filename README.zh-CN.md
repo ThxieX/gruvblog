@@ -11,7 +11,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-[预览](https://thxie.com) · [文档](#配置) · [报告问题](https://github.com/ThxieX/v0-gruvbox-blog/issues)
+[预览](https://thxie.com) · [文档](#配置) · [报告问题](https://github.com/ThxieX/gruvblog/issues)
 
 </div>
 
@@ -40,7 +40,7 @@
 - 🎨 **多主题** — Gruvbox (Light/Dark/Soft/High Contrast) + Catppuccin
 - 🌍 **国际化** — 英语、中文、日语开箱即用
 - 💬 **评论** — 基于 GitHub Discussions 的 Giscus
-- 🤖 **AI 聊天** — 内置 AI 助手（可选）
+- 🤖 **AI 聊天** — 基于 Cloudflare AI Search 的 RAG 智能助手（可选）
 - 📡 **RSS 订阅** — 自动生成的订阅源
 - 🔍 **SEO 优化** — 动态 sitemap、robots.txt、Open Graph
 
@@ -52,7 +52,7 @@
 | 样式 | [Tailwind CSS 4](https://tailwindcss.com/) |
 | UI 组件 | [shadcn/ui](https://ui.shadcn.com/) |
 | 评论 | [Giscus](https://giscus.app/) |
-| AI | [Vercel AI SDK](https://sdk.vercel.ai/) |
+| AI | [Cloudflare AI Search](https://developers.cloudflare.com/ai-search/) (AutoRAG) |
 | 语言 | [TypeScript 5.7](https://www.typescriptlang.org/) |
 
 ## 🚀 快速开始
@@ -66,8 +66,8 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/ThxieX/v0-gruvbox-blog.git
-cd v0-gruvbox-blog
+git clone https://github.com/ThxieX/gruvblog.git
+cd gruvblog
 
 # 安装依赖
 pnpm install
@@ -80,6 +80,8 @@ pnpm dev
 
 ## ⚙️ 配置
 
+### 站点配置（核心）
+
 编辑 `lib/config/site.config.ts` — 这是你**唯一需要修改的文件**：
 
 ```typescript
@@ -88,13 +90,18 @@ export const siteConfig: Config = {
     name: 'Your Name',
     email: 'your@email.com',
     github: 'https://github.com/yourusername',
+    twitter: 'https://twitter.com/yourusername',
   },
   site: {
     title: 'Your Blog Title',
     description: 'Your site description',
     url: 'https://yourdomain.com',
+    locale: 'en_US', // Default locale (e.g., en_US, zh_CN, ja_JP)
+    keywords: ['tech', 'programming', 'tutorial'], // SEO keywords 
+    footerText: '© 2026 · Your Name · All rights reserved.', // Custom footer text  
   },
-  // Comments - Get values from https://giscus.app
+  
+  // Comments (Optional) - Get values from https://giscus.app
   comments: {
     enabled: true,
     repo: 'yourusername/your-repo',
@@ -104,6 +111,34 @@ export const siteConfig: Config = {
   },
 }
 ```
+
+### AI 助手（可选）
+
+> 你可以选择不开启该功能或选择其他集成方式。
+>
+> 这里我使用 [Cloudflare AI Search](https://developers.cloudflare.com/ai-search/usage/) (Beta)
+
+启用基于 Cloudflare AI Search 的 RAG 智能助手，选择你喜欢的集成方式：
+
+- Workers Binding
+- REST API
+- Public Endpoint
+
+例如，Public Endpoint
+```bash
+# Cloudflare AI Search 端点环境变量
+NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL=https://<INSTANCE_ID>.search.ai.cloudflare.com
+```
+
+当前支持的数据源方式：
+- **R2 Bucket**：连接 Cloudflare R2 bucket，为存储的文档建立索引。
+- **Website**: 将您拥有的域名连接到网站页面索引。
+
+> 本项目支持构建时自动生成 `/robot.txt` 以及 `/sitemap.xml`，适用于常见 Website 抓取
+> 
+> 可参考: [Cloudflare Docs#how-website-crawling-works](https://developers.cloudflare.com/ai-search/configuration/data-source/website/#how-website-crawling-works)
+
+
 
 ## 📝 撰写文章
 
@@ -178,7 +213,7 @@ content/posts/
 
 > 一键部署到 Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ThxieX/v0-gruvbox-blog)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/ThxieX/gruvblog)
 
 ### 手动构建
 
@@ -210,7 +245,7 @@ pnpm start
 本项目基于 MIT 许可证开源 - 详见 [LICENSE](LICENSE) 文件。
 
 
-<a href="https://v0.app/chat/api/kiro/clone/ThxieX/v0-gruvbox-blog" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+<a href="https://v0.app/chat/api/kiro/clone/ThxieX/gruvblog" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
 ---
 
 <div align="center">

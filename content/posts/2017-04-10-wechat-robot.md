@@ -103,7 +103,7 @@ aiSummary: "本文记录了基于微信 Web 版通信协议实现智能聊天机
 URL: https://login.wx.qq.com/jslogin
 请求方式: GET
 参数: 
-	a. appid: wx782c26e4c19acffb(固定字符串)
+	a. appid: YOUR_WECHAT_APP_ID(固定字符串)
 	b. fun: new(固定值)
 	c. lang: zh_CN(固定值)
 	d. _: 1491804797(13位毫秒时间戳)
