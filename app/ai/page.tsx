@@ -78,7 +78,7 @@ function getSourceTitle(source: Source): string {
 // Sources card component
 function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
   if (sources.length === 0) return null
-  
+
   return (
     <div className="mt-3 pt-3 border-t border-border/50">
       <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
@@ -89,7 +89,7 @@ function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
         {sources.slice(0, 5).map((source) => {
           const url = getSourceUrl(source.item.key)
           const title = getSourceTitle(source)
-          
+
           if (url) {
             return (
               <Link
@@ -102,7 +102,7 @@ function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
               </Link>
             )
           }
-          
+
           return (
             <span
               key={source.id}
@@ -133,23 +133,21 @@ function MessageBubble({ message, sourcesLabel }: { message: Message, sourcesLab
 
   return (
     <div
-      className={`flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
-        message.role === 'user' ? 'justify-end' : 'justify-start'
-      }`}
+      className={`flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${message.role === 'user' ? 'justify-end' : 'justify-start'
+        }`}
     >
       {message.role === 'assistant' && (
         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
           <Bot className="h-4 w-4 text-primary" />
         </div>
       )}
-      
+
       <div className="max-w-[80%] group">
         <div
-          className={`px-4 py-2 rounded-lg ${
-            message.role === 'user'
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-secondary text-secondary-foreground'
-          }`}
+          className={`px-4 py-2 rounded-lg ${message.role === 'user'
+            ? 'bg-primary text-primary-foreground'
+            : 'bg-secondary text-secondary-foreground'
+            }`}
         >
           {message.role === 'assistant' ? (
             <>
@@ -166,7 +164,7 @@ function MessageBubble({ message, sourcesLabel }: { message: Message, sourcesLab
             </div>
           )}
         </div>
-        
+
         {/* Copy button for assistant messages */}
         {message.role === 'assistant' && message.content && (
           <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -196,19 +194,19 @@ function MessageBubble({ message, sourcesLabel }: { message: Message, sourcesLab
 const suggestedQuestions = {
   en: [
     'What topics does Thxie write about?',
-    'Explain the ReAct pattern for AI agents',
+    'How to customize the Icarus theme',
     'What is Thxie\'s philosophy on code?',
     'Recommend an article about LLMs',
   ],
   'zh-CN': [
     'Thxie 写什么主题的文章？',
-    '解释 AI 智能体的 ReAct 模式',
+    '如何定制 icarus 主题',
     'Thxie 的代码哲学是什么？',
     '推荐一篇关于大语言模型的文章',
   ],
   ja: [
     'Thxieはどんなトピックについて書いていますか？',
-    'AIエージェントのReActパターンを説明して',
+    'Icarusテーマのカスタマイズ方法',
     'Thxieのコード哲学は何ですか？',
     'LLMに関する記事をおすすめして',
   ],
@@ -262,10 +260,10 @@ export default function AIChatPage() {
       const contextMessages = messages
         .slice(-(MAX_CONTEXT_TURNS * 2))
         .map(m => ({ role: m.role, content: m.content }))
-      
+
       // Add current user message
       const allMessages = [...contextMessages, { role: 'user' as const, content: text.trim() }]
-      
+
       const response = await fetch(AI_SEARCH_URL, {
         method: 'POST',
         headers: {
@@ -300,20 +298,20 @@ export default function AIChatPage() {
 
         for (const line of lines) {
           const trimmed = line.trim()
-          
+
           // Track event type
           if (trimmed.startsWith('event:')) {
             currentEventType = trimmed.slice(6).trim()
             continue
           }
-          
+
           if (trimmed.startsWith('data:')) {
             const data = trimmed.slice(5).trim()
             if (data === '[DONE]') continue
-            
+
             try {
               const parsed = JSON.parse(data)
-              
+
               // Handle chunks event (RAG sources)
               if (currentEventType === 'chunks' && Array.isArray(parsed)) {
                 sources = parsed.map((chunk: Source) => ({
@@ -376,13 +374,13 @@ export default function AIChatPage() {
       }
       readerRef.current = null
     }
-    
+
     // Then abort the fetch request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
       abortControllerRef.current = null
     }
-    
+
     // Save the streamed content as a message if any
     if (streamingContent) {
       const assistantMessage: Message = {
@@ -393,7 +391,7 @@ export default function AIChatPage() {
       }
       setMessages(prev => [...prev, assistantMessage])
     }
-    
+
     setIsLoading(false)
     setStreamingContent('')
     setCurrentSources([])
@@ -420,7 +418,7 @@ export default function AIChatPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       {/* Back link */}
-      <Link 
+      <Link
         href="/"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-8"
       >
@@ -452,7 +450,7 @@ export default function AIChatPage() {
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-8">
                 <Sparkles className="h-8 w-8 text-primary" />
               </div>
-              
+
               {/* Suggested questions as cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto">
                 {questions.map((question, index) => (
@@ -476,7 +474,7 @@ export default function AIChatPage() {
                   sourcesLabel={t('ai.sources')}
                 />
               ))}
-              
+
               {/* Streaming response */}
               {isLoading && streamingContent && (
                 <div className="flex gap-3 justify-start">
@@ -505,7 +503,7 @@ export default function AIChatPage() {
                   </div>
                 </div>
               )}
-              
+
               <div ref={messagesEndRef} />
             </>
           )}
@@ -550,8 +548,8 @@ export default function AIChatPage() {
               </button>
             )}
           </form>
-          <p className="text-xs text-muted-foreground mt-2">
-            {t('ai.disclaimer')}
+          <p className="text-xs text-muted-foreground mt-2 pl-1">
+            * {t('ai.disclaimer')}
           </p>
         </div>
       </div>
