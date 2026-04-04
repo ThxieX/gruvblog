@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft, Send, Square, Sparkles, User, Bot, Loader2, Trash2 } from 'lucide-react'
 import { useI18n } from '@/lib/i18n-context'
+import { MarkdownRenderer } from '@/components/markdown-renderer'
 
 // Cloudflare AI Search Public Endpoint
 const AI_SEARCH_URL = process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL
@@ -44,6 +45,7 @@ export default function AIChatPage() {
   const [streamingContent, setStreamingContent] = useState('')
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
+  const readerRef = useRef<ReadableStreamDefaultReader<Uint8Array> | null>(null)
   const { t, locale } = useI18n()
 
   // Send message to Cloudflare AI Search
@@ -98,6 +100,7 @@ export default function AIChatPage() {
 
       const reader = response.body?.getReader()
       if (!reader) throw new Error('No response body')
+      readerRef.current = reader
 
       const decoder = new TextDecoder()
       let fullContent = ''
@@ -137,6 +140,7 @@ export default function AIChatPage() {
       setMessages(prev => [...prev, assistantMessage])
       setStreamingContent('')
       setIsLoading(false)
+      readerRef.current = null
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
         // Handled by stopGeneration, don't do anything here
@@ -155,9 +159,21 @@ export default function AIChatPage() {
   }, [messages, isLoading, t])
 
   // Stop generation and keep already streamed content
-  const stopGeneration = useCallback(() => {
+  const stopGeneration = useCallback(async () => {
+    // Cancel the reader first to properly close the connection
+    if (readerRef.current) {
+      try {
+        await readerRef.current.cancel()
+      } catch {
+        // Ignore cancel errors
+      }
+      readerRef.current = null
+    }
+    
+    // Then abort the fetch request
     if (abortControllerRef.current) {
       abortControllerRef.current.abort()
+      abortControllerRef.current = null
     }
     
     // Save the streamed content as a message if any
@@ -270,9 +286,15 @@ export default function AIChatPage() {
                         : 'bg-secondary text-secondary-foreground'
                     }`}
                   >
-                    <div className="prose-sm prose-gruvbox whitespace-pre-wrap">
-                      {message.content}
-                    </div>
+                    {message.role === 'assistant' ? (
+                      <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
+                        <MarkdownRenderer content={message.content} />
+                      </div>
+                    ) : (
+                      <div className="whitespace-pre-wrap">
+                        {message.content}
+                      </div>
+                    )}
                   </div>
                   
                   {message.role === 'user' && (
@@ -290,8 +312,8 @@ export default function AIChatPage() {
                     <Bot className="h-4 w-4 text-primary" />
                   </div>
                   <div className="max-w-[80%] px-4 py-2 rounded-lg bg-secondary text-secondary-foreground">
-                    <div className="prose-sm prose-gruvbox whitespace-pre-wrap">
-                      {streamingContent}
+                    <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
+                      <MarkdownRenderer content={streamingContent} />
                     </div>
                   </div>
                 </div>
