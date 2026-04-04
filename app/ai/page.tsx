@@ -458,8 +458,9 @@ export default function AIChatPage() {
                 {questions.map((question, index) => (
                   <button
                     key={index}
-                    onClick={() => setInput(question)}
-                    className="text-left text-sm px-4 py-3 bg-secondary/50 text-secondary-foreground rounded-lg border border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-foreground transition-all duration-200"
+                    onClick={() => sendMessage(question)}
+                    disabled={isLoading}
+                    className="text-left text-sm px-4 py-3 bg-secondary/50 text-secondary-foreground rounded-lg border border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-foreground transition-all duration-200 disabled:opacity-50"
                   >
                     {question}
                   </button>
