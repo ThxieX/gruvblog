@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft, Send, Square, Sparkles, User, Bot, Loader2, Trash2, FileText, ExternalLink } from 'lucide-react'
+import { ArrowLeft, Send, Square, Sparkles, Bot, Trash2, FileText, ExternalLink, Copy, Check } from 'lucide-react'
 import { useI18n } from '@/lib/i18n-context'
 import { MarkdownRenderer } from '@/components/markdown-renderer'
 
@@ -32,6 +32,17 @@ interface Source {
   }
 }
 
+// Typing indicator component (three bouncing dots)
+function TypingIndicator() {
+  return (
+    <div className="flex items-center gap-1">
+      <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:-0.3s]" />
+      <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce [animation-delay:-0.15s]" />
+      <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" />
+    </div>
+  )
+}
+
 // Helper function to generate post URL from source key
 function getSourceUrl(key: string): string | null {
   // Handle different key formats from Cloudflare AI Search
@@ -45,11 +56,6 @@ function getSourceUrl(key: string): string | null {
     }
   }
   return null
-}
-
-// Helper function to format score as percentage
-function formatScore(score: number): string {
-  return `${Math.round(score * 100)}%`
 }
 
 // Helper function to extract title from source
@@ -96,11 +102,10 @@ function SourcesCard({ sources, locale }: { sources: Source[], locale: string })
               <Link
                 key={source.id}
                 href={url}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-background/50 border border-border/50 rounded-md hover:bg-primary/10 hover:border-primary/30 transition-colors group"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-background/50 border border-border/50 rounded-md hover:bg-primary/10 hover:border-primary/50 hover:shadow-sm transition-all duration-200 group"
               >
-                <span className="truncate max-w-[150px]" title={title}>{title}</span>
-                <span className="text-muted-foreground/60">{formatScore(source.score)}</span>
-                <ExternalLink className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary/60" />
+                <span className="truncate max-w-[200px]" title={title}>{title}</span>
+                <ExternalLink className="h-3 w-3 text-muted-foreground/40 group-hover:text-primary transition-colors" />
               </Link>
             )
           }
@@ -108,13 +113,88 @@ function SourcesCard({ sources, locale }: { sources: Source[], locale: string })
           return (
             <span
               key={source.id}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs bg-background/50 border border-border/50 rounded-md"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-background/50 border border-border/50 rounded-md"
             >
-              <span className="truncate max-w-[150px]" title={title}>{title}</span>
-              <span className="text-muted-foreground/60">{formatScore(source.score)}</span>
+              <span className="truncate max-w-[200px]" title={title}>{title}</span>
             </span>
           )
         })}
+      </div>
+    </div>
+  )
+}
+
+// Message bubble component with copy functionality
+function MessageBubble({ message, locale }: { message: Message, locale: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Clipboard API not available
+    }
+  }
+
+  return (
+    <div
+      className={`flex gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300 ${
+        message.role === 'user' ? 'justify-end' : 'justify-start'
+      }`}
+    >
+      {message.role === 'assistant' && (
+        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          <Bot className="h-4 w-4 text-primary" />
+        </div>
+      )}
+      
+      <div className="max-w-[80%] group">
+        <div
+          className={`px-4 py-2 rounded-lg ${
+            message.role === 'user'
+              ? 'bg-primary text-primary-foreground'
+              : 'bg-secondary text-secondary-foreground'
+          }`}
+        >
+          {message.role === 'assistant' ? (
+            <>
+              <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
+                <MarkdownRenderer content={message.content} />
+              </div>
+              {message.sources && message.sources.length > 0 && (
+                <SourcesCard sources={message.sources} locale={locale} />
+              )}
+            </>
+          ) : (
+            <div className="whitespace-pre-wrap">
+              {message.content}
+            </div>
+          )}
+        </div>
+        
+        {/* Copy button for assistant messages */}
+        {message.role === 'assistant' && message.content && (
+          <div className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button
+              onClick={handleCopy}
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-foreground rounded transition-colors"
+            >
+              {copied ? (
+                <>
+                  <Check className="h-3 w-3" />
+                  <span>Copied</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="h-3 w-3" />
+                  <span>Copy</span>
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -380,20 +460,22 @@ export default function AIChatPage() {
         {/* Messages area */}
         <div className="min-h-[400px] max-h-[500px] overflow-y-auto p-4 space-y-4">
           {messages.length === 0 ? (
-            <div className="text-center py-8">
-              <Bot className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-              <p className="text-muted-foreground mb-6">
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
+                <Sparkles className="h-8 w-8 text-primary" />
+              </div>
+              <p className="text-muted-foreground mb-8 text-sm">
                 {t('ai.placeholder')}
               </p>
               
-              {/* Suggested questions */}
-              <div className="flex flex-wrap gap-2 justify-center">
+              {/* Suggested questions as cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg mx-auto">
                 {questions.map((question, index) => (
                   <button
                     key={index}
                     onClick={() => handleSuggestedQuestion(question)}
                     disabled={isLoading}
-                    className="text-xs px-3 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-primary hover:text-primary-foreground transition-colors disabled:opacity-50"
+                    className="text-left text-sm px-4 py-3 bg-secondary/50 text-secondary-foreground rounded-lg border border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-foreground transition-all duration-200 disabled:opacity-50"
                   >
                     {question}
                   </button>
@@ -403,47 +485,11 @@ export default function AIChatPage() {
           ) : (
             <>
               {messages.map((message) => (
-                <div
+                <MessageBubble
                   key={message.id}
-                  className={`flex gap-3 ${
-                    message.role === 'user' ? 'justify-end' : 'justify-start'
-                  }`}
-                >
-                  {message.role === 'assistant' && (
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <Bot className="h-4 w-4 text-primary" />
-                    </div>
-                  )}
-                  
-                  <div
-                    className={`max-w-[80%] px-4 py-2 rounded-lg ${
-                      message.role === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-secondary text-secondary-foreground'
-                    }`}
-                  >
-                    {message.role === 'assistant' ? (
-                      <>
-                        <div className="prose-sm prose-gruvbox [&_p]:mb-2 [&_p:last-child]:mb-0 [&_pre]:my-2 [&_ul]:my-2 [&_ol]:my-2">
-                          <MarkdownRenderer content={message.content} />
-                        </div>
-                        {message.sources && message.sources.length > 0 && (
-                          <SourcesCard sources={message.sources} locale={locale} />
-                        )}
-                      </>
-                    ) : (
-                      <div className="whitespace-pre-wrap">
-                        {message.content}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {message.role === 'user' && (
-                    <div className="w-8 h-8 rounded-full bg-foreground/10 flex items-center justify-center shrink-0">
-                      <User className="h-4 w-4 text-foreground" />
-                    </div>
-                  )}
-                </div>
+                  message={message}
+                  locale={locale}
+                />
               ))}
               
               {/* Streaming response */}
@@ -463,14 +509,14 @@ export default function AIChatPage() {
                 </div>
               )}
 
-              {/* Loading indicator */}
+              {/* Loading indicator with typing animation */}
               {isLoading && !streamingContent && (
-                <div className="flex gap-3 justify-start">
+                <div className="flex gap-3 justify-start animate-in fade-in duration-300">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <Bot className="h-4 w-4 text-primary" />
                   </div>
-                  <div className="px-4 py-2 rounded-lg bg-secondary text-secondary-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                  <div className="px-4 py-3 rounded-lg bg-secondary text-secondary-foreground">
+                    <TypingIndicator />
                   </div>
                 </div>
               )}
