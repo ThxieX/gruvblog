@@ -11,6 +11,9 @@ const AI_SEARCH_URL = process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL
   ? `${process.env.NEXT_PUBLIC_CLOUDFLARE_AI_SEARCH_URL}/chat/completions`
   : null
 
+// Maximum number of conversation turns to keep as context (user + assistant pairs)
+const MAX_CONTEXT_TURNS = 10
+
 interface Message {
   id: string
   role: 'user' | 'assistant'
@@ -32,11 +35,14 @@ interface Source {
 // Helper function to generate post URL from source key
 function getSourceUrl(key: string): string | null {
   // Handle different key formats from Cloudflare AI Search
-  // e.g., "posts/my-article.md", "content/posts/slug.mdx", "slug"
+  // e.g., "2015-06-26-singleton-pattern.md", "posts/my-article.md", "content/posts/slug.mdx"
   const match = key.match(/(?:posts\/)?([^/]+?)(?:\.mdx?)?$/i)
   if (match) {
-    const slug = match[1]
-    return `/posts/${slug}`
+    // Remove date prefix (e.g., "2015-06-26-" or "2015_06_26-") to get the actual slug
+    const slug = match[1].replace(/^\d{4}[-_]\d{2}[-_]\d{2}[-_]?/, '')
+    if (slug) {
+      return `/posts/${slug}`
+    }
   }
   return null
 }
@@ -56,8 +62,9 @@ function getSourceTitle(source: Source): string {
   const key = source.item.key
   const match = key.match(/(?:posts\/)?([^/]+?)(?:\.mdx?)?$/i)
   if (match) {
-    // Convert slug to readable title
-    return match[1].replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+    // Remove date prefix, then convert slug to readable title
+    const slug = match[1].replace(/^\d{4}[-_]\d{2}[-_]\d{2}[-_]?/, '')
+    return slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
   }
   return key
 }
@@ -177,14 +184,22 @@ export default function AIChatPage() {
     setCurrentSources([])
 
     try {
-      // Single-turn conversation: only send current user message
+      // Build conversation history with max context turns
+      // Take the last N messages (user + assistant pairs = 2 * MAX_CONTEXT_TURNS messages)
+      const contextMessages = messages
+        .slice(-(MAX_CONTEXT_TURNS * 2))
+        .map(m => ({ role: m.role, content: m.content }))
+      
+      // Add current user message
+      const allMessages = [...contextMessages, { role: 'user' as const, content: text.trim() }]
+      
       const response = await fetch(AI_SEARCH_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          messages: [{ role: 'user', content: text.trim() }],
+          messages: allMessages,
           stream: true,
         }),
         signal: abortControllerRef.current.signal,
@@ -275,7 +290,7 @@ export default function AIChatPage() {
       setIsLoading(false)
       setStreamingContent('')
     }
-  }, [isLoading, t])
+  }, [messages, isLoading, t])
 
   // Stop generation and keep already streamed content
   const stopGeneration = useCallback(async () => {
