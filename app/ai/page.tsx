@@ -76,15 +76,8 @@ function getSourceTitle(source: Source): string {
 }
 
 // Sources card component
-function SourcesCard({ sources, locale }: { sources: Source[], locale: string }) {
+function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
   if (sources.length === 0) return null
-  
-  const labels = {
-    en: 'Referenced Articles',
-    'zh-CN': '引用来源',
-    ja: '参照記事',
-  }
-  const label = labels[locale as keyof typeof labels] || labels.en
   
   return (
     <div className="mt-3 pt-3 border-t border-border/50">
@@ -125,7 +118,7 @@ function SourcesCard({ sources, locale }: { sources: Source[], locale: string })
 }
 
 // Message bubble component with copy functionality
-function MessageBubble({ message, locale }: { message: Message, locale: string }) {
+function MessageBubble({ message, sourcesLabel }: { message: Message, sourcesLabel: string }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopy = async () => {
@@ -164,7 +157,7 @@ function MessageBubble({ message, locale }: { message: Message, locale: string }
                 <MarkdownRenderer content={message.content} />
               </div>
               {message.sources && message.sources.length > 0 && (
-                <SourcesCard sources={message.sources} locale={locale} />
+                <SourcesCard sources={message.sources} label={sourcesLabel} />
               )}
             </>
           ) : (
@@ -418,11 +411,6 @@ export default function AIChatPage() {
     setInput('')
   }
 
-  const handleSuggestedQuestion = (question: string) => {
-    if (isLoading) return
-    sendMessage(question)
-  }
-
   const handleClear = () => {
     setMessages([])
   }
@@ -470,9 +458,8 @@ export default function AIChatPage() {
                 {questions.map((question, index) => (
                   <button
                     key={index}
-                    onClick={() => handleSuggestedQuestion(question)}
-                    disabled={isLoading}
-                    className="text-left text-sm px-4 py-3 bg-secondary/50 text-secondary-foreground rounded-lg border border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-foreground transition-all duration-200 disabled:opacity-50"
+                    onClick={() => setInput(question)}
+                    className="text-left text-sm px-4 py-3 bg-secondary/50 text-secondary-foreground rounded-lg border border-border/50 hover:bg-primary/10 hover:border-primary/30 hover:text-foreground transition-all duration-200"
                   >
                     {question}
                   </button>
@@ -485,7 +472,7 @@ export default function AIChatPage() {
                 <MessageBubble
                   key={message.id}
                   message={message}
-                  locale={locale}
+                  sourcesLabel={t('ai.sources')}
                 />
               ))}
               
@@ -500,7 +487,7 @@ export default function AIChatPage() {
                       <MarkdownRenderer content={streamingContent} />
                     </div>
                     {currentSources.length > 0 && (
-                      <SourcesCard sources={currentSources} locale={locale} />
+                      <SourcesCard sources={currentSources} label={t('ai.sources')} />
                     )}
                   </div>
                 </div>
