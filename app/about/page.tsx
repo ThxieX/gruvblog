@@ -80,7 +80,7 @@ const timeline = [
 const nowItems = {
   focus: [
     'Building AI-powered developer tools that enhance productivity without adding complexity',
-    
+
   ],
   learning: [
     'Slowly but consistently, using Anki and immersion',
@@ -107,7 +107,7 @@ const usesCategories = [
     icon: MonitorSmartphone,
     titleKey: 'uses.hardware',
     items: [
-      { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'macOS' },
+      { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'apple' },
       { name: 'iPhone', description: 'Mobile development & testing', icon: 'ios' },
       { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/' },
       { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs' },
@@ -387,7 +387,7 @@ export default function AboutPage() {
               <p className="text-sm text-muted-foreground font-mono mb-5">
                 <span className="opacity-50"> # </span>{t('about.projects.intro')}
               </p>
-         
+
 
               <div className="space-y-2">
                 {projects.map((project) => (
@@ -439,7 +439,7 @@ export default function AboutPage() {
         {activeTab === 'now' && (
           <div className="space-y-10 animate-in fade-in duration-300">
             <div className="flex items-center gap-4 text-sm text-muted-foreground pb-4 border-b border-border">
-          
+
               <p className="text-muted-foreground text-sm">
                 {t('now.description').split('now page')[0]}
                 <a
@@ -452,10 +452,10 @@ export default function AboutPage() {
                 </a>
                 {t('now.description').split('now page')[1] || ''}
               </p>
-              
+
             </div>
 
-           
+
 
             <section>
               <div className="flex items-center gap-2 mb-3">
