@@ -17,6 +17,7 @@ import {
   Monitor,
   Terminal,
   Keyboard,
+  Cat,
   ExternalLink,
   Heart,
   Users
@@ -101,7 +102,7 @@ interface Tool {
   description: string
   url?: string
   icon?: string // Simple Icons slug
-  lucideIcon?: 'keyboard' | 'monitor' // Fallback for brands not in Simple Icons
+  lucideIcon?: 'keyboard' | 'monitor' | 'cat' // Fallback for brands not in Simple Icons
 }
 
 const usesCategories = [
@@ -129,7 +130,7 @@ const usesCategories = [
     icon: Terminal,
     titleKey: 'uses.terminal',
     items: [
-      { name: 'Kitty', description: 'Primary terminal, GPU-rendered', url: 'https://sw.kovidgoyal.net/kitty/', icon: 'kitty' },
+      { name: 'Kitty', description: 'Primary terminal, GPU-rendered', url: 'https://sw.kovidgoyal.net/kitty/', lucideIcon: 'cat' },
       { name: 'Warp', description: 'Secondary, AI-powered', url: 'https://warp.dev/', icon: 'warp' },
       { name: 'zsh + Starship', description: 'Shell with minimal prompt', url: 'https://starship.rs/', icon: 'starship' },
       { name: 'yazi + fzf + zoxide + tmux', description: 'Session & fuzzy navigation', icon: 'tmux' },
@@ -548,7 +549,7 @@ export default function AboutPage() {
                     </div>
                     <ul className="space-y-3">
                       {category.items.map((item) => {
-                        const LucideIcon = item.lucideIcon === 'keyboard' ? Keyboard : item.lucideIcon === 'monitor' ? Monitor : null
+                        const LucideIcon = item.lucideIcon === 'keyboard' ? Keyboard : item.lucideIcon === 'monitor' ? Monitor : item.lucideIcon === 'cat' ? Cat : null
                         return (
                         <li key={item.name} className="group flex items-start gap-2">
                           {item.icon ? (
