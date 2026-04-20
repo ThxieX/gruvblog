@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Github,
@@ -202,10 +202,35 @@ const links = [
 
 type TabType = 'about' | 'now' | 'uses' | 'links'
 
+const VALID_TABS = ['about', 'now', 'uses', 'links'] as const
+
+function getTabFromHash(): TabType {
+  if (typeof window === 'undefined') return 'about'
+  const hash = window.location.hash.slice(1).toLowerCase()
+  return VALID_TABS.includes(hash as TabType) ? (hash as TabType) : 'about'
+}
+
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState<TabType>('about')
   const lastUpdated = '2024-01-15'
   const { t } = useI18n()
+
+  // Sync tab state with URL hash
+  useEffect(() => {
+    // Set initial tab from hash
+    setActiveTab(getTabFromHash())
+
+    // Listen for hash changes (browser back/forward)
+    const onHashChange = () => setActiveTab(getTabFromHash())
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
+  // Update URL hash when tab changes (without triggering hashchange)
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab)
+    window.history.replaceState(null, '', tab === 'about' ? '/about' : `#${tab}`)
+  }
 
   const tabs = [
     { id: 'about' as TabType, label: t('about.tab.about') },
@@ -268,7 +293,7 @@ export default function AboutPage() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={cn(
                 "pb-3 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
                 activeTab === tab.id
