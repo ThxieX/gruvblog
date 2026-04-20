@@ -202,6 +202,12 @@ const links = [
     url: 'https://wesbos.com/',
     avatar: 'W',
   },
+  {
+    name: 'Takuya Matsuyama',
+    description: 'devaslife, indie hacker & Inkdrop creator',
+    url: 'https://www.craftz.dog/',
+    avatar: 'T',
+  },
 ]
 
 type TabType = 'about' | 'now' | 'uses' | 'links'
