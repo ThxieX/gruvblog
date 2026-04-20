@@ -14,6 +14,7 @@ import {
   Brain,
   Music,
   MonitorSmartphone,
+  Monitor,
   Terminal,
   Keyboard,
   ExternalLink,
@@ -99,7 +100,8 @@ interface Tool {
   name: string
   description: string
   url?: string
-  icon?: string // shields.io icon name or emoji
+  icon?: string // Simple Icons slug
+  lucideIcon?: 'keyboard' | 'monitor' // Fallback for brands not in Simple Icons
 }
 
 const usesCategories = [
@@ -109,8 +111,8 @@ const usesCategories = [
     items: [
       { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'apple' },
       { name: 'iPhone', description: 'Mobile development & testing', icon: 'ios' },
-      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/', icon: 'nuphy' },
-      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', icon: 'benq' },
+      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/', lucideIcon: 'keyboard' },
+      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', lucideIcon: 'monitor' },
     ] as Tool[],
   },
   {
@@ -544,15 +546,19 @@ export default function AboutPage() {
                       <h2 className="font-serif font-bold text-foreground">{t(category.titleKey)}</h2>
                     </div>
                     <ul className="space-y-3">
-                      {category.items.map((item) => (
+                      {category.items.map((item) => {
+                        const LucideIcon = item.lucideIcon === 'keyboard' ? Keyboard : item.lucideIcon === 'monitor' ? Monitor : null
+                        return (
                         <li key={item.name} className="group flex items-start gap-2">
-                          {item.icon && (
+                          {item.icon ? (
                             <img
                               src={`https://cdn.simpleicons.org/${item.icon}`}
                               alt=""
                               className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity dark:invert dark:brightness-90"
                             />
-                          )}
+                          ) : LucideIcon ? (
+                            <LucideIcon className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                          ) : null}
                           <div className="flex-1">
                             {item.url ? (
                               <a
@@ -570,7 +576,7 @@ export default function AboutPage() {
                             <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                           </div>
                         </li>
-                      ))}
+                      )})}
                     </ul>
                   </section>
                 )
