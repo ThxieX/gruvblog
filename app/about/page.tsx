@@ -109,8 +109,8 @@ const usesCategories = [
     items: [
       { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'apple' },
       { name: 'iPhone', description: 'Mobile development & testing', icon: 'ios' },
-      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/' },
-      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs' },
+      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/', icon: 'nuphy' },
+      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', icon: 'benq' },
     ] as Tool[],
   },
   {
