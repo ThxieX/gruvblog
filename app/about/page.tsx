@@ -129,9 +129,10 @@ const usesCategories = [
     icon: Terminal,
     titleKey: 'uses.terminal',
     items: [
-      { name: 'Warp', description: 'GPU-accelerated terminal', url: 'https://warp.dev/', icon: 'warp' },
-      { name: 'Fish Shell', description: 'Great autocompletion', url: 'https://fishshell.com/', icon: 'gnubash' },
-      { name: 'tmux + fzf + ripgrep', description: 'Essential CLI tools', icon: 'tmux' },
+      { name: 'Kitty', description: 'Primary terminal, GPU-rendered', url: 'https://sw.kovidgoyal.net/kitty/', icon: 'kitty' },
+      { name: 'Warp', description: 'Secondary, AI-powered', url: 'https://warp.dev/', icon: 'warp' },
+      { name: 'zsh + Starship', description: 'Shell with minimal prompt', url: 'https://starship.rs/', icon: 'starship' },
+      { name: 'yazi + fzf + zoxide + tmux', description: 'Session & fuzzy navigation', icon: 'tmux' },
     ] as Tool[],
   },
   {
