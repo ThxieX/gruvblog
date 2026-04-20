@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import {
   Github,
@@ -14,8 +14,10 @@ import {
   Brain,
   Music,
   MonitorSmartphone,
+  Monitor,
   Terminal,
   Keyboard,
+  Cat,
   ExternalLink,
   Heart,
   Users
@@ -80,7 +82,7 @@ const timeline = [
 const nowItems = {
   focus: [
     'Building AI-powered developer tools that enhance productivity without adding complexity',
-    
+
   ],
   learning: [
     'Slowly but consistently, using Anki and immersion',
@@ -99,7 +101,8 @@ interface Tool {
   name: string
   description: string
   url?: string
-  icon?: string // shields.io icon name or emoji
+  icon?: string // Simple Icons slug
+  lucideIcon?: 'keyboard' | 'monitor' | 'cat' // Fallback for brands not in Simple Icons
 }
 
 const usesCategories = [
@@ -107,10 +110,10 @@ const usesCategories = [
     icon: MonitorSmartphone,
     titleKey: 'uses.hardware',
     items: [
-      { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'macOS' },
+      { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'apple' },
       { name: 'iPhone', description: 'Mobile development & testing', icon: 'ios' },
-      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/' },
-      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs' },
+      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/', lucideIcon: 'keyboard' },
+      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', lucideIcon: 'monitor' },
     ] as Tool[],
   },
   {
@@ -127,9 +130,10 @@ const usesCategories = [
     icon: Terminal,
     titleKey: 'uses.terminal',
     items: [
-      { name: 'Warp', description: 'GPU-accelerated terminal', url: 'https://warp.dev/', icon: 'warp' },
-      { name: 'Fish Shell', description: 'Great autocompletion', url: 'https://fishshell.com/', icon: 'gnubash' },
-      { name: 'tmux + fzf + ripgrep', description: 'Essential CLI tools', icon: 'tmux' },
+      { name: 'Kitty', description: 'Primary terminal, GPU-rendered', url: 'https://sw.kovidgoyal.net/kitty/', lucideIcon: 'cat' },
+      { name: 'Warp', description: 'Secondary, AI-powered', url: 'https://warp.dev/', icon: 'warp' },
+      { name: 'zsh + Starship', description: 'Shell with minimal prompt', url: 'https://starship.rs/', icon: 'starship' },
+      { name: 'yazi + fzf + zoxide + tmux', description: 'Session & fuzzy navigation', icon: 'tmux' },
     ] as Tool[],
   },
   {
@@ -198,14 +202,45 @@ const links = [
     url: 'https://wesbos.com/',
     avatar: 'W',
   },
+  {
+    name: 'Takuya Matsuyama',
+    description: 'devaslife, indie hacker & Inkdrop creator',
+    url: 'https://www.craftz.dog/',
+    avatar: 'T',
+  },
 ]
 
 type TabType = 'about' | 'now' | 'uses' | 'links'
+
+const VALID_TABS = ['about', 'now', 'uses', 'links'] as const
+
+function getTabFromHash(): TabType {
+  if (typeof window === 'undefined') return 'about'
+  const hash = window.location.hash.slice(1).toLowerCase()
+  return VALID_TABS.includes(hash as TabType) ? (hash as TabType) : 'about'
+}
 
 export default function AboutPage() {
   const [activeTab, setActiveTab] = useState<TabType>('about')
   const lastUpdated = '2024-01-15'
   const { t } = useI18n()
+
+  // Sync tab state with URL hash
+  useEffect(() => {
+    // Set initial tab from hash
+    setActiveTab(getTabFromHash())
+
+    // Listen for hash changes (browser back/forward)
+    const onHashChange = () => setActiveTab(getTabFromHash())
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
+  // Update URL hash when tab changes (without triggering hashchange)
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab)
+    window.history.replaceState(null, '', tab === 'about' ? '/about' : `#${tab}`)
+  }
 
   const tabs = [
     { id: 'about' as TabType, label: t('about.tab.about') },
@@ -268,7 +303,7 @@ export default function AboutPage() {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={cn(
                 "pb-3 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
                 activeTab === tab.id
@@ -362,7 +397,7 @@ export default function AboutPage() {
               <p className="text-sm text-muted-foreground font-mono mb-5">
                 <span className="opacity-50"> # </span>{t('about.projects.intro')}
               </p>
-         
+
 
               <div className="space-y-2">
                 {projects.map((project) => (
@@ -414,7 +449,7 @@ export default function AboutPage() {
         {activeTab === 'now' && (
           <div className="space-y-10 animate-in fade-in duration-300">
             <div className="flex items-center gap-4 text-sm text-muted-foreground pb-4 border-b border-border">
-          
+
               <p className="text-muted-foreground text-sm">
                 {t('now.description').split('now page')[0]}
                 <a
@@ -427,10 +462,10 @@ export default function AboutPage() {
                 </a>
                 {t('now.description').split('now page')[1] || ''}
               </p>
-              
+
             </div>
 
-           
+
 
             <section>
               <div className="flex items-center gap-2 mb-3">
@@ -519,15 +554,19 @@ export default function AboutPage() {
                       <h2 className="font-serif font-bold text-foreground">{t(category.titleKey)}</h2>
                     </div>
                     <ul className="space-y-3">
-                      {category.items.map((item) => (
+                      {category.items.map((item) => {
+                        const LucideIcon = item.lucideIcon === 'keyboard' ? Keyboard : item.lucideIcon === 'monitor' ? Monitor : item.lucideIcon === 'cat' ? Cat : null
+                        return (
                         <li key={item.name} className="group flex items-start gap-2">
-                          {item.icon && (
+                          {item.icon ? (
                             <img
                               src={`https://cdn.simpleicons.org/${item.icon}`}
                               alt=""
                               className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity dark:invert dark:brightness-90"
                             />
-                          )}
+                          ) : LucideIcon ? (
+                            <LucideIcon className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                          ) : null}
                           <div className="flex-1">
                             {item.url ? (
                               <a
@@ -545,7 +584,7 @@ export default function AboutPage() {
                             <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                           </div>
                         </li>
-                      ))}
+                      )})}
                     </ul>
                   </section>
                 )
