@@ -116,9 +116,36 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter', 'Inter Fallback', system-ui, sans-serif;
-  --font-serif: 'Merriweather', 'Merriweather Fallback', Georgia, serif;
-  --font-mono: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace;
+  /*
+   * Font stacks use per-glyph fallback: Latin glyphs render with the primary
+   * webfont (Inter / Merriweather / JetBrains Mono), while CJK glyphs fall
+   * through to the best available OS-native Chinese font.
+   *
+   * Notes on design choices:
+   * - `-apple-system` / `BlinkMacSystemFont` are listed first so Apple devices
+   *   pick up the system UI font metrics, which pair well with Inter.
+   * - The serif stack intentionally skips Windows' `SimSun` (poor on-screen
+   *   rendering) and falls back to a sans-serif CJK face instead — same
+   *   approach as Medium and Notion in Chinese contexts.
+   */
+  --font-sans:
+    'Inter', 'Inter Fallback',
+    -apple-system, BlinkMacSystemFont,
+    'PingFang SC', 'Hiragino Sans GB',
+    'Microsoft YaHei', '微软雅黑',
+    'Source Han Sans SC', 'Noto Sans CJK SC',
+    system-ui, sans-serif;
+  --font-serif:
+    'Merriweather', 'Merriweather Fallback', Georgia,
+    'Source Han Serif SC', 'Noto Serif CJK SC',
+    'Songti SC',
+    'PingFang SC', 'Microsoft YaHei', '微软雅黑',
+    serif;
+  --font-mono:
+    'JetBrains Mono', 'JetBrains Mono Fallback',
+    ui-monospace, SFMono-Regular, Menlo, Consolas,
+    'PingFang SC', 'Microsoft YaHei',
+    monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -163,6 +190,15 @@
   }
   body {
     @apply bg-background text-foreground;
+    /*
+     * "palt" enables proportional alternate widths for CJK punctuation,
+     * tightening the extra whitespace around commas/periods/quotes.
+     * "kern" keeps Latin kerning on.
+     */
+    font-feature-settings: 'kern', 'palt';
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   
   /* Typography for articles - Semantic Prose System */
