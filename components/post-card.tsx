@@ -16,7 +16,7 @@ export function PostCard({ post, onCategoryClick, onTagClick }: PostCardProps) {
         <div className="flex items-center gap-3 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             <Calendar className="h-3 w-3" />
-            {new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+            {new Date(post.date).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric'

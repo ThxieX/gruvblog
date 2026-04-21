@@ -411,7 +411,7 @@ function PostsPageContent() {
 
   const postsByYear = useMemo(() => 
     sortedPosts.reduce((acc, post) => {
-      const year = new Date(post.date + 'T00:00:00').getFullYear()
+      const year = new Date(post.date).getFullYear()
       if (!acc[year]) acc[year] = []
       acc[year].push(post)
       return acc

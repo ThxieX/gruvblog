@@ -61,7 +61,7 @@ export default async function PostPage({ params }: PageProps) {
     <>
       <span className="flex items-center gap-1">
         <Calendar className="h-4 w-4" />
-        {new Date(post.date + 'T00:00:00').toLocaleDateString('en-US', {
+        {new Date(post.date).toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'long',
           day: 'numeric'
