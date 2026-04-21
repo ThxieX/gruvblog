@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import {
@@ -23,10 +23,22 @@ import {
   Sparkles,
   PartyPopper,
   Rocket,
-  CloudRain
+  CloudRain,
+  type LucideIcon
 } from 'lucide-react'
 import { getPosts, getCategories, getTags } from '@/lib/blog-data'
 import { useI18n } from '@/lib/i18n-context'
+
+// Easter egg effect definitions
+const easterEggs: Array<{
+  id: string
+  icon: LucideIcon
+  action: () => void
+}> = [
+  { id: 'confetti', icon: PartyPopper, action: createConfetti },
+  { id: 'celebrate', icon: Rocket, action: createCelebrate },
+  { id: 'rain', icon: CloudRain, action: createRain },
+]
 
 // Confetti effect
 function createConfetti() {
@@ -141,6 +153,11 @@ export function CommandMenu() {
   const categories = getCategories()
   const allTags = getTags()
 
+  // Randomly select one easter egg on mount
+  const randomEasterEgg = useMemo(() => 
+    easterEggs[Math.floor(Math.random() * easterEggs.length)], 
+  [])
+
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
@@ -200,24 +217,12 @@ export function CommandMenu() {
 
         <CommandSeparator />
 
-        <CommandGroup heading={t('cmd.fun')}>
+        <CommandGroup heading={t('cmd.easterEgg')}>
           <CommandItem
-            onSelect={() => runCommand(() => createConfetti())}
+            onSelect={() => runCommand(() => randomEasterEgg.action())}
           >
-            <PartyPopper className="mr-2 h-4 w-4" />
-            <span>Confetti</span>
-          </CommandItem>
-          <CommandItem
-            onSelect={() => runCommand(() => createCelebrate())}
-          >
-            <Rocket className="mr-2 h-4 w-4" />
-            <span>Celebrate</span>
-          </CommandItem>
-          <CommandItem
-            onSelect={() => runCommand(() => createRain())}
-          >
-            <CloudRain className="mr-2 h-4 w-4" />
-            <span>Make it rain</span>
+            <randomEasterEgg.icon className="mr-2 h-4 w-4" />
+            <span>{t(`cmd.egg.${randomEasterEgg.id}`)}</span>
           </CommandItem>
         </CommandGroup>
 
