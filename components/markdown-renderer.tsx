@@ -48,7 +48,8 @@ const SPACING = {
   
   // Block element spacing
   paragraph: '1.75rem',  // 28px - generous paragraph gap for readability
-  list: '1.5rem',        // 24px - list block margin
+  list: '0.5rem',        // 8px - minimal top margin, relies on previous element's marginBottom
+  listBottom: '1.5rem',  // 24px - list block bottom margin for separation from next element
   blockquote: '2rem',    // 32px - stand out as a distinct element
   codeBlock: '2rem',     // 32px - code blocks need clear separation
   image: '2.5rem',       // 40px - images as visual breaks
@@ -326,7 +327,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         style={{ 
           listStyleType: 'disc',
           marginTop: SPACING.list,
-          marginBottom: SPACING.list,
+          marginBottom: SPACING.listBottom,
         }}
       >
         {children}
@@ -339,7 +340,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         style={{ 
           listStyleType: 'decimal',
           marginTop: SPACING.list,
-          marginBottom: SPACING.list,
+          marginBottom: SPACING.listBottom,
         }}
       >
         {children}
