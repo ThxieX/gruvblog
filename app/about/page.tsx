@@ -113,7 +113,7 @@ const usesCategories = [
       { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'apple' },
       { name: 'iPhone', description: 'Mobile development & testing', icon: 'ios' },
       { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/', lucideIcon: 'keyboard' },
-      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', lucideIcon: 'monitor' },
+      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', url: 'https://www.benq.com/zh-tw/monitor/home/ew2880u.html', lucideIcon: 'monitor' },
     ] as Tool[],
   },
   {
