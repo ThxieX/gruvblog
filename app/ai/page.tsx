@@ -77,7 +77,18 @@ function getSourceTitle(source: Source): string {
 
 // Sources card component
 function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
-  if (sources.length === 0) return null
+  // Deduplicate sources by article key, keeping the highest scoring chunk for each article
+  const uniqueSources = sources.reduce<Source[]>((acc, source) => {
+    const existingIndex = acc.findIndex(s => s.item.key === source.item.key)
+    if (existingIndex === -1) {
+      acc.push(source)
+    } else if (source.score > acc[existingIndex].score) {
+      acc[existingIndex] = source
+    }
+    return acc
+  }, [])
+
+  if (uniqueSources.length === 0) return null
 
   return (
     <div className="mt-3 pt-3 border-t border-border/50">
@@ -86,14 +97,14 @@ function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
         <span>{label}</span>
       </div>
       <div className="flex flex-wrap gap-2">
-        {sources.slice(0, 5).map((source) => {
+        {uniqueSources.slice(0, 5).map((source) => {
           const url = getSourceUrl(source.item.key)
           const title = getSourceTitle(source)
 
           if (url) {
             return (
               <Link
-                key={source.id}
+                key={source.item.key}
                 href={url}
                 className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-background/50 border border-border/50 rounded-md hover:bg-primary/10 hover:border-primary/50 hover:shadow-sm transition-all duration-200 group"
               >
@@ -105,7 +116,7 @@ function SourcesCard({ sources, label }: { sources: Source[], label: string }) {
 
           return (
             <span
-              key={source.id}
+              key={source.item.key}
               className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs bg-background/50 border border-border/50 rounded-md"
             >
               <span className="truncate max-w-[200px]" title={title}>{title}</span>
