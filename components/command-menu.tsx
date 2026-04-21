@@ -33,20 +33,55 @@ function createConfetti() {
   
   for (let i = 0; i < confettiCount; i++) {
     const confetti = document.createElement('div')
+    const size = Math.random() * 15 + 8
+    const startX = Math.random() * window.innerWidth
+    const velocityX = (Math.random() - 0.5) * 8
+    const velocityY = Math.random() * 4 + 3
+    const rotation = Math.random() * 360
+    const rotationSpeed = (Math.random() - 0.5) * 10
+    
     confetti.style.cssText = `
       position: fixed;
-      width: ${Math.random() * 15 + 8}px;
-      height: ${Math.random() * 15 + 8}px;
+      width: ${size}px;
+      height: ${size}px;
       background: ${colors[Math.floor(Math.random() * colors.length)]};
-      left: ${Math.random() * 100}vw;
+      left: ${startX}px;
       top: -20px;
       border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
       pointer-events: none;
       z-index: 9999;
-      animation: confetti-fall ${Math.random() * 2 + 2}s linear forwards;
     `
     document.body.appendChild(confetti)
-    setTimeout(() => confetti.remove(), 4500)
+    
+    let y = -20
+    let x = startX
+    let rot = rotation
+    let opacity = 1
+    
+    const animate = () => {
+      y += velocityY
+      x += velocityX
+      rot += rotationSpeed
+      
+      // Fade out near bottom
+      if (y > window.innerHeight * 0.7) {
+        opacity -= 0.02
+      }
+      
+      confetti.style.top = y + 'px'
+      confetti.style.left = x + 'px'
+      confetti.style.transform = `rotate(${rot}deg)`
+      confetti.style.opacity = String(opacity)
+      
+      if (y < window.innerHeight + 50 && opacity > 0) {
+        requestAnimationFrame(animate)
+      } else {
+        confetti.remove()
+      }
+    }
+    
+    // Stagger the start for wave effect
+    setTimeout(() => requestAnimationFrame(animate), i * 5)
   }
 }
 
