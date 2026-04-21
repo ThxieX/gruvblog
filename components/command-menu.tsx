@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback, useMemo } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTheme } from 'next-themes'
 import {
@@ -21,36 +21,22 @@ import {
   Tag,
   Folder,
   Sparkles,
-  PartyPopper,
-  Rocket,
-  CloudRain,
-  type LucideIcon
+  Gift
 } from 'lucide-react'
 import { getPosts, getCategories, getTags } from '@/lib/blog-data'
 import { useI18n } from '@/lib/i18n-context'
 
-// Easter egg effect definitions
-const easterEggs: Array<{
-  id: string
-  icon: LucideIcon
-  action: () => void
-}> = [
-  { id: 'confetti', icon: PartyPopper, action: createConfetti },
-  { id: 'celebrate', icon: Rocket, action: createCelebrate },
-  { id: 'rain', icon: CloudRain, action: createRain },
-]
-
-// Confetti effect
+// Confetti effect - enhanced for bigger visual impact
 function createConfetti() {
   const colors = ['#fb4934', '#b8bb26', '#fabd2f', '#83a598', '#d3869b', '#8ec07c', '#fe8019']
-  const confettiCount = 150
+  const confettiCount = 300
   
   for (let i = 0; i < confettiCount; i++) {
     const confetti = document.createElement('div')
     confetti.style.cssText = `
       position: fixed;
-      width: ${Math.random() * 10 + 5}px;
-      height: ${Math.random() * 10 + 5}px;
+      width: ${Math.random() * 15 + 8}px;
+      height: ${Math.random() * 15 + 8}px;
       background: ${colors[Math.floor(Math.random() * colors.length)]};
       left: ${Math.random() * 100}vw;
       top: -20px;
@@ -58,29 +44,28 @@ function createConfetti() {
       pointer-events: none;
       z-index: 9999;
       animation: confetti-fall ${Math.random() * 2 + 2}s linear forwards;
-      --velocity-x: ${(Math.random() - 0.5) * 20};
     `
     document.body.appendChild(confetti)
-    setTimeout(() => confetti.remove(), 4000)
+    setTimeout(() => confetti.remove(), 4500)
   }
 }
 
-// Celebrate effect (fireworks-like)
+// Celebrate effect (fireworks-like) - enhanced for bigger visual impact
 function createCelebrate() {
-  const colors = ['#fb4934', '#b8bb26', '#fabd2f', '#83a598', '#d3869b', '#fe8019']
+  const colors = ['#fb4934', '#b8bb26', '#fabd2f', '#83a598', '#d3869b', '#fe8019', '#8ec07c']
   const centerX = window.innerWidth / 2
   const centerY = window.innerHeight / 2
   
-  for (let burst = 0; burst < 3; burst++) {
+  for (let burst = 0; burst < 5; burst++) {
     setTimeout(() => {
-      const x = centerX + (Math.random() - 0.5) * 400
-      const y = centerY + (Math.random() - 0.5) * 200
+      const x = centerX + (Math.random() - 0.5) * 600
+      const y = centerY + (Math.random() - 0.5) * 400
       
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i < 50; i++) {
         const particle = document.createElement('div')
-        const angle = (i / 30) * Math.PI * 2
-        const velocity = Math.random() * 200 + 100
-        const size = Math.random() * 8 + 4
+        const angle = (i / 50) * Math.PI * 2
+        const velocity = Math.random() * 350 + 150
+        const size = Math.random() * 14 + 6
         
         particle.style.cssText = `
           position: fixed;
@@ -92,6 +77,7 @@ function createCelebrate() {
           border-radius: 50%;
           pointer-events: none;
           z-index: 9999;
+          box-shadow: 0 0 ${size/2}px ${colors[Math.floor(Math.random() * colors.length)]};
         `
         document.body.appendChild(particle)
         
@@ -101,11 +87,12 @@ function createCelebrate() {
         
         const animate = () => {
           px += vx * 0.016
-          py += vy * 0.016 + 2
-          opacity -= 0.02
+          py += vy * 0.016 + 3
+          opacity -= 0.015
           particle.style.left = px + 'px'
           particle.style.top = py + 'px'
           particle.style.opacity = String(opacity)
+          particle.style.transform = `scale(${opacity})`
           
           if (opacity > 0) {
             requestAnimationFrame(animate)
@@ -115,32 +102,14 @@ function createCelebrate() {
         }
         requestAnimationFrame(animate)
       }
-    }, burst * 300)
+    }, burst * 250)
   }
 }
 
-// Rain effect
-function createRain() {
-  const rainCount = 100
-  
-  for (let i = 0; i < rainCount; i++) {
-    setTimeout(() => {
-      const drop = document.createElement('div')
-      drop.style.cssText = `
-        position: fixed;
-        width: 2px;
-        height: ${Math.random() * 20 + 10}px;
-        background: linear-gradient(to bottom, transparent, #83a598);
-        left: ${Math.random() * 100}vw;
-        top: -30px;
-        pointer-events: none;
-        z-index: 9999;
-        animation: rain-fall ${Math.random() * 0.5 + 0.5}s linear forwards;
-      `
-      document.body.appendChild(drop)
-      setTimeout(() => drop.remove(), 1500)
-    }, i * 20)
-  }
+// Randomly trigger one of the easter egg effects
+function triggerSurprise() {
+  const effects = [createConfetti, createCelebrate]
+  effects[Math.floor(Math.random() * effects.length)]()
 }
 
 export function CommandMenu() {
@@ -152,11 +121,6 @@ export function CommandMenu() {
   const posts = getPosts()
   const categories = getCategories()
   const allTags = getTags()
-
-  // Randomly select one easter egg on mount
-  const randomEasterEgg = useMemo(() => 
-    easterEggs[Math.floor(Math.random() * easterEggs.length)], 
-  [])
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -170,18 +134,7 @@ export function CommandMenu() {
     return () => document.removeEventListener('keydown', down)
   }, [])
 
-  // Add rain animation CSS
-  useEffect(() => {
-    const style = document.createElement('style')
-    style.textContent = `
-      @keyframes rain-fall {
-        0% { transform: translateY(0); opacity: 1; }
-        100% { transform: translateY(100vh); opacity: 0; }
-      }
-    `
-    document.head.appendChild(style)
-    return () => style.remove()
-  }, [])
+
 
   const runCommand = useCallback((command: () => unknown) => {
     setOpen(false)
@@ -219,10 +172,10 @@ export function CommandMenu() {
 
         <CommandGroup heading={t('cmd.easterEgg')}>
           <CommandItem
-            onSelect={() => runCommand(() => randomEasterEgg.action())}
+            onSelect={() => runCommand(() => triggerSurprise())}
           >
-            <randomEasterEgg.icon className="mr-2 h-4 w-4" />
-            <span>{t(`cmd.egg.${randomEasterEgg.id}`)}</span>
+            <Gift className="mr-2 h-4 w-4" />
+            <span>{t('cmd.surprise')}</span>
           </CommandItem>
         </CommandGroup>
 
