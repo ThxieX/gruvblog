@@ -151,7 +151,7 @@ const usesCategories = [
     titleKey: 'uses.entertainment',
     items: [
       { name: 'Van Gogh AG15, Dove dd260s', description: 'Music player', icon: 'guitarpro' },
-      { name: 'Zoom H6, IQ7', description: 'Previous: Zoom IQ7, Zoom H6', icon: 'zoom' },
+      { name: 'Zoom H6, IQ7', description: 'Previous: Zoom IQ7, Zoom H6', url: "https://zoomcorp.com/", icon: 'zoom' },
     ] as Tool[],
   },
 ]
@@ -557,34 +557,35 @@ export default function AboutPage() {
                       {category.items.map((item) => {
                         const LucideIcon = item.lucideIcon === 'keyboard' ? Keyboard : item.lucideIcon === 'monitor' ? Monitor : item.lucideIcon === 'cat' ? Cat : null
                         return (
-                        <li key={item.name} className="group flex items-start gap-2">
-                          {item.icon ? (
-                            <img
-                              src={`https://cdn.simpleicons.org/${item.icon}`}
-                              alt=""
-                              className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity dark:invert dark:brightness-90"
-                            />
-                          ) : LucideIcon ? (
-                            <LucideIcon className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity" />
-                          ) : null}
-                          <div className="flex-1">
-                            {item.url ? (
-                              <a
-                                href={item.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-sm font-medium text-foreground group-hover:text-primary transition-colors inline-flex items-center gap-1"
-                              >
-                                {item.name}
-                                <ExternalLink className="h-3 w-3 opacity-40" />
-                              </a>
-                            ) : (
-                              <span className="text-sm font-medium text-foreground">{item.name}</span>
-                            )}
-                            <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
-                          </div>
-                        </li>
-                      )})}
+                          <li key={item.name} className="group flex items-start gap-2">
+                            {item.icon ? (
+                              <img
+                                src={`https://cdn.simpleicons.org/${item.icon}`}
+                                alt=""
+                                className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity dark:invert dark:brightness-90"
+                              />
+                            ) : LucideIcon ? (
+                              <LucideIcon className="h-4 w-4 mt-0.5 opacity-60 group-hover:opacity-100 transition-opacity" />
+                            ) : null}
+                            <div className="flex-1">
+                              {item.url ? (
+                                <a
+                                  href={item.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm font-medium text-foreground group-hover:text-primary transition-colors inline-flex items-center gap-1"
+                                >
+                                  {item.name}
+                                  <ExternalLink className="h-3 w-3 opacity-40" />
+                                </a>
+                              ) : (
+                                <span className="text-sm font-medium text-foreground">{item.name}</span>
+                              )}
+                              <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                            </div>
+                          </li>
+                        )
+                      })}
                     </ul>
                   </section>
                 )
