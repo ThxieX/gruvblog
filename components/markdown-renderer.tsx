@@ -47,7 +47,7 @@ const SPACING = {
   h6: { top: '1.25rem', bottom: '0.375rem' },// 20px / 6px  - minimal
   
   // Block element spacing
-  paragraph: '1.25rem',  // 20px - balanced paragraph gap (not too tight, not too loose)
+  paragraph: '0.875rem', // 14px - tight connection for inline-flow content (e.g. text + list)
   list: '0',             // 0 - no top margin, fully relies on previous element's marginBottom
   listBottom: '1.5rem',  // 24px - list block bottom margin for separation from next element
   blockquote: '2rem',    // 32px - stand out as a distinct element
