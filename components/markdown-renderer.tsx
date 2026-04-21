@@ -19,23 +19,43 @@ interface MarkdownRendererProps {
  * 
  * === Typography Hierarchy (YC/Silicon Valley Standard) ===
  * 
+ * Design Principles:
+ * 1. "Top-heavy spacing" - marginTop > marginBottom (~2.5:1 ratio)
+ *    This creates clear section breaks while keeping content close to its heading.
+ * 2. Generous breathing room - inspired by Linear, Stripe, Vercel blogs
+ * 3. Hierarchical spacing - higher level headings get more space
+ * 
  * Hierarchy signals (priority order):
  * 1. Font Size (most important)
  * 2. Spacing (margin-top/margin-bottom)
  * 3. Font Weight
  * 4. Color Brightness (least important - grayscale gradient only)
- * 
- * ALL 4 DIMENSIONS MUST BE DIFFERENT FOR EACH LEVEL:
- * 
- * | Level | Size     | Weight | MarginTop | MarginBottom | Color       |
- * |-------|----------|--------|-----------|--------------|-------------|
- * | H1    | 2.25rem  | 800    | 2.5rem    | 1.25rem      | fg 100%     |
- * | H2    | 1.75rem  | 700    | 2rem      | 1rem         | fg 97%      |
- * | H3    | 1.375rem | 650    | 1.625rem  | 0.75rem      | fg 92%      |
- * | H4    | 1.125rem | 600    | 1.25rem   | 0.5rem       | fg 85%      |
- * | H5    | 1rem     | 550    | 1rem      | 0.375rem     | muted 75%   |
- * | H6    | 0.875rem | 500    | 0.75rem   | 0.25rem      | muted 60%   |
  */
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SPACING SYSTEM - Centralized for easy maintenance
+// All values in rem. Adjust these to fine-tune the overall breathing room.
+// ═══════════════════════════════════════════════════════════════════════════
+const SPACING = {
+  // Heading spacing: [marginTop, marginBottom]
+  // Ratio ~2.5:1 ensures headings "belong to" content below, not above
+  h1: { top: '3.5rem', bottom: '1.5rem' },   // 56px / 24px - page title, maximum breathing
+  h2: { top: '3rem', bottom: '1.25rem' },    // 48px / 20px - chapter level, clear section break
+  h3: { top: '2.25rem', bottom: '1rem' },    // 36px / 16px - subsection
+  h4: { top: '1.75rem', bottom: '0.75rem' }, // 28px / 12px - minor heading
+  h5: { top: '1.5rem', bottom: '0.5rem' },   // 24px / 8px  - rare use
+  h6: { top: '1.25rem', bottom: '0.375rem' },// 20px / 6px  - minimal
+  
+  // Block element spacing
+  paragraph: '0.875rem', // 14px - tight connection for inline-flow content (e.g. text + list)
+  list: '0',             // 0 - no top margin, fully relies on previous element's marginBottom
+  listBottom: '1.5rem',  // 24px - list block bottom margin for separation from next element
+  blockquote: '2rem',    // 32px - stand out as a distinct element
+  codeBlock: '2rem',     // 32px - code blocks need clear separation
+  image: '2.5rem',       // 40px - images as visual breaks
+  hr: '3rem',            // 48px - horizontal rules as major section dividers
+  table: '2rem',         // 32px - tables need breathing room
+} as const
 export function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const components: Components = {
     // ═══════════════════════════════════════════════════════════════════════
@@ -47,11 +67,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         id={id} 
         className="font-serif scroll-mt-24"
         style={{ 
-          fontSize: '2.25rem',    // 36px - largest
-          fontWeight: 800,        // extrabold - heaviest
+          fontSize: '2.25rem',
+          fontWeight: 800,
           lineHeight: 1.2,
-          marginTop: '2.5rem',    // 40px - most spacing
-          marginBottom: '1.25rem', // 20px
+          marginTop: SPACING.h1.top,
+          marginBottom: SPACING.h1.bottom,
           color: 'var(--prose-h1)',
         }}
       >
@@ -63,11 +83,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         id={id} 
         className="font-serif scroll-mt-24"
         style={{ 
-          fontSize: '1.75rem',    // 28px
-          fontWeight: 700,        // bold
+          fontSize: '1.75rem',
+          fontWeight: 700,
           lineHeight: 1.25,
-          marginTop: '2rem',      // 32px
-          marginBottom: '1rem',   // 16px
+          marginTop: SPACING.h2.top,
+          marginBottom: SPACING.h2.bottom,
           color: 'var(--prose-h2)',
         }}
       >
@@ -79,11 +99,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         id={id} 
         className="font-serif scroll-mt-24"
         style={{ 
-          fontSize: '1.375rem',   // 22px
-          fontWeight: 650,        // between semibold and bold
+          fontSize: '1.375rem',
+          fontWeight: 650,
           lineHeight: 1.3,
-          marginTop: '1.625rem',  // 26px
-          marginBottom: '0.75rem', // 12px
+          marginTop: SPACING.h3.top,
+          marginBottom: SPACING.h3.bottom,
           color: 'var(--prose-h3)',
         }}
       >
@@ -95,11 +115,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         id={id} 
         className="font-serif scroll-mt-24"
         style={{ 
-          fontSize: '1.125rem',   // 18px
-          fontWeight: 600,        // semibold
+          fontSize: '1.125rem',
+          fontWeight: 600,
           lineHeight: 1.35,
-          marginTop: '1.25rem',   // 20px
-          marginBottom: '0.5rem', // 8px
+          marginTop: SPACING.h4.top,
+          marginBottom: SPACING.h4.bottom,
           color: 'var(--prose-h4)',
         }}
       >
@@ -112,11 +132,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         id={id} 
         className="font-serif scroll-mt-24"
         style={{ 
-          fontSize: '1rem',       // 16px - same as body
-          fontWeight: 550,        // between medium and semibold
+          fontSize: '1rem',
+          fontWeight: 550,
           lineHeight: 1.4,
-          marginTop: '1rem',      // 16px
-          marginBottom: '0.375rem', // 6px
+          marginTop: SPACING.h5.top,
+          marginBottom: SPACING.h5.bottom,
           color: 'var(--prose-h5)',
         }}
       >
@@ -128,11 +148,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
         id={id} 
         className="font-serif scroll-mt-24"
         style={{ 
-          fontSize: '0.875rem',   // 14px - smaller than body
-          fontWeight: 500,        // medium - lightest
+          fontSize: '0.875rem',
+          fontWeight: 500,
           lineHeight: 1.5,
-          marginTop: '0.75rem',   // 12px - least spacing
-          marginBottom: '0.25rem', // 4px
+          marginTop: SPACING.h6.top,
+          marginBottom: SPACING.h6.bottom,
           color: 'var(--prose-h6)',
         }}
       >
@@ -154,7 +174,10 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       }
       
       return (
-        <p className="mb-6 leading-7 text-foreground">
+        <p 
+          className="leading-7 text-foreground"
+          style={{ marginBottom: SPACING.paragraph }}
+        >
           {children}
         </p>
       )
@@ -217,7 +240,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
       if (!src || typeof src !== 'string') return null
       
       return (
-        <figure className="my-8">
+        <figure style={{ marginTop: SPACING.image, marginBottom: SPACING.image }}>
           <div className="relative overflow-hidden rounded-lg border border-border">
             <Image
               src={src}
@@ -280,8 +303,10 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // ═══════════════════════════════════════════════════════════════════════
     blockquote: ({ children }) => (
       <blockquote 
-        className="my-6 pl-4 rounded-r-md [&_p]:text-inherit [&_p]:mb-3 [&_p:last-child]:mb-0"
-        style={{ 
+        className="pl-4 rounded-r-md [&_p]:text-inherit [&_p]:mb-3 [&_p:last-child]:mb-0"
+        style={{
+          marginTop: SPACING.blockquote,
+          marginBottom: SPACING.blockquote, 
           borderLeft: '4px solid var(--prose-quote-border)',
           padding: '0.75rem 1rem',
           fontSize: '0.9375rem', // 15px, 比正文 16px 略小
@@ -298,9 +323,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // ═══════════════════════════════════════════════════════════════════════
     ul: ({ children }) => (
       <ul 
-        className="pl-6 my-4 space-y-2"
+        className="pl-6 space-y-2"
         style={{ 
           listStyleType: 'disc',
+          marginTop: SPACING.list,
+          marginBottom: SPACING.listBottom,
         }}
       >
         {children}
@@ -309,9 +336,11 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
     ol: ({ children }) => (
       <ol 
-        className="pl-6 my-4 space-y-2"
+        className="pl-6 space-y-2"
         style={{ 
           listStyleType: 'decimal',
+          marginTop: SPACING.list,
+          marginBottom: SPACING.listBottom,
         }}
       >
         {children}
@@ -334,8 +363,10 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // ═══════════════════════════════════════════════════════════════════════
     hr: () => (
       <hr 
-        className="my-10 border-none h-px"
+        className="border-none h-px"
         style={{
+          marginTop: SPACING.hr,
+          marginBottom: SPACING.hr,
           background: `linear-gradient(
             to right,
             transparent,
@@ -351,7 +382,10 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // TABLES (GFM)
     // ═══════════════════════════════════════════════════════════════════════
     table: ({ children }) => (
-      <div className="my-6 overflow-x-auto">
+      <div 
+        className="overflow-x-auto"
+        style={{ marginTop: SPACING.table, marginBottom: SPACING.table }}
+      >
         <table className="min-w-full border-collapse border border-border">
           {children}
         </table>

@@ -53,7 +53,10 @@ export function CodeBlock({ code, language = 'typescript', filename }: CodeBlock
   const normalizedLang = languageMap[language] || language
 
   return (
-    <div className="group relative my-6 rounded-lg border border-border bg-card overflow-hidden">
+    <div 
+      className="group relative rounded-lg border border-border bg-card overflow-hidden"
+      style={{ marginTop: '2rem', marginBottom: '2rem' }}
+    >
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-2 bg-secondary/50 border-b border-border">
         <div className="flex items-center gap-2">
