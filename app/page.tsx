@@ -72,7 +72,7 @@ export default function Home() {
       {/* Recent Posts */}
       <section className="mb-16">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold tracking-tight text-primary">
+          <h2 className="text-xl font-bold text-primary">
             {t('home.recentPosts')}
           </h2>
           <Link 

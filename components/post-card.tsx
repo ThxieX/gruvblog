@@ -52,7 +52,7 @@ export function PostCard({ post, onCategoryClick, onTagClick }: PostCardProps) {
 
         {/* Title - clickable to post */}
         <Link href={`/posts/${post.slug}`} className="group">
-          <h2 className="font-bold text-foreground group-hover:text-primary transition-colors text-lg tracking-tight">
+          <h2 className="font-bold text-foreground group-hover:text-primary transition-colors text-lg">
             {post.title}
           </h2>
           {/* Excerpt */}

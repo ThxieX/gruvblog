@@ -117,30 +117,27 @@
 
 @theme inline {
   /*
-   * Typography — single-family system (YC / Silicon Valley standard).
+   * Typography — single-family system (Vercel / Linear / Stripe pattern).
+   * Hierarchy comes from weight, size, and letter-spacing — not from
+   * swapping typefaces. Latin glyphs render with Inter (self-hosted via
+   * next/font); CJK glyphs fall through per-glyph to the best OS-native
+   * face (PingFang SC on macOS, Microsoft YaHei on Windows, Noto Sans CJK
+   * SC on Android/Linux).
    *
-   * Following the pattern of Vercel, Linear, and Stripe blogs, we use ONE
-   * typeface family (Inter) across the entire site. Visual hierarchy is
-   * established through weight, size, and letter-spacing — not by swapping
-   * typefaces. This yields consistent cross-platform output and removes a
-   * category of "English-serif + Chinese-sans" mismatches.
-   *
-   * Per-glyph fallback: Latin glyphs render with Inter (self-hosted via
-   * next/font), while CJK glyphs automatically fall through to the best
-   * OS-native Chinese face (PingFang SC on macOS, Microsoft YaHei on
-   * Windows, Noto Sans CJK SC on Android/Linux).
+   * `var(--font-inter)` / `var(--font-jetbrains-mono)` are injected by
+   * next/font and already include the webfont + metric-adjusted fallback;
+   * we extend them with CJK and system fallbacks only.
    */
   --font-sans:
-    'Inter', 'Inter Fallback',
+    var(--font-inter),
     -apple-system, BlinkMacSystemFont,
     'PingFang SC', 'Hiragino Sans GB',
     'Microsoft YaHei', '微软雅黑',
     'Source Han Sans SC', 'Noto Sans CJK SC',
     system-ui, sans-serif;
   --font-mono:
-    'JetBrains Mono', 'JetBrains Mono Fallback',
+    var(--font-jetbrains-mono),
     ui-monospace, SFMono-Regular, Menlo, Consolas,
-    'PingFang SC', 'Microsoft YaHei',
     monospace;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
