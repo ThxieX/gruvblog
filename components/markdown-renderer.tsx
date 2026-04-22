@@ -65,7 +65,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     h1: ({ children, id }) => (
       <h1 
         id={id} 
-        className="font-serif scroll-mt-24"
+        className="scroll-mt-24 tracking-tight"
         style={{ 
           fontSize: '2.25rem',
           fontWeight: 800,
@@ -81,7 +81,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     h2: ({ children, id }) => (
       <h2 
         id={id} 
-        className="font-serif scroll-mt-24"
+        className="scroll-mt-24 tracking-tight"
         style={{ 
           fontSize: '1.75rem',
           fontWeight: 700,
@@ -97,7 +97,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     h3: ({ children, id }) => (
       <h3 
         id={id} 
-        className="font-serif scroll-mt-24"
+        className="scroll-mt-24"
         style={{ 
           fontSize: '1.375rem',
           fontWeight: 650,
@@ -113,7 +113,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     h4: ({ children, id }) => (
       <h4 
         id={id} 
-        className="font-serif scroll-mt-24"
+        className="scroll-mt-24"
         style={{ 
           fontSize: '1.125rem',
           fontWeight: 600,
@@ -130,7 +130,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     h5: ({ children, id }) => (
       <h5 
         id={id} 
-        className="font-serif scroll-mt-24"
+        className="scroll-mt-24"
         style={{ 
           fontSize: '1rem',
           fontWeight: 550,
@@ -146,7 +146,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     h6: ({ children, id }) => (
       <h6 
         id={id} 
-        className="font-serif scroll-mt-24"
+        className="scroll-mt-24"
         style={{ 
           fontSize: '0.875rem',
           fontWeight: 500,
@@ -348,12 +348,8 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     ),
 
     li: ({ children }) => (
-      <li 
-        className="text-foreground"
-        style={{ 
-          // Use ::marker pseudo-element styling via CSS
-        }}
-      >
+      // Marker color is styled via CSS in globals.css (.prose-gruvbox li::marker)
+      <li className="text-foreground">
         {children}
       </li>
     ),

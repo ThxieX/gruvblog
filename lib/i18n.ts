@@ -53,7 +53,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     'about.stacks': 'Skills & Technologies',
     'about.stacks.subtitle': 'How i Work',
     'about.projects': 'Projects & Contributions',
-    'about.projects.intro': 'In the era of AI, the boundary of what I "can do" is limited only by my imagination, not the syntax.',
     'about.philosophy': 'Philosophy',
     'about.connect': 'Get in Touch',
     'about.connect.description': 'Open to interesting conversations and collaboration.',
@@ -120,7 +119,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Archive
     'posts.loadEarlier': 'Load earlier posts',
     'posts.articles': 'articles',
-    
+
     // Filter
     'filter.showing': 'Showing',
     'filter.matchingPosts': 'matching posts',
@@ -161,7 +160,6 @@ export const translations: Record<Locale, Record<string, string>> = {
     // 'about.bio.intro': '我相信，最好的解决方案往往是最优雅。',
     'about.stacks': '技能 & 技术栈',
     'about.projects': '项目 & 贡献',
-    // 'about.projects.intro': '在 AI 时代，"能做" 的边界只在于想象力，而不是语法。',
     'about.philosophy': '理念',
     'about.connect': '联系我',
     'about.connect.description': '欢迎有趣的对话和合作。',
@@ -212,7 +210,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Archive
     'posts.loadEarlier': '加载更早的文章',
     'posts.articles': '篇文章',
-    
+
     // Filter
     'filter.showing': '显示',
     'filter.matchingPosts': '篇匹配文章',
@@ -302,7 +300,7 @@ export const translations: Record<Locale, Record<string, string>> = {
     // Archive
     'posts.loadEarlier': '以前の記事を読み込む',
     'posts.articles': '件の記事',
-    
+
     // Filter
     'filter.showing': '表示中',
     'filter.matchingPosts': '件の一致する記事',

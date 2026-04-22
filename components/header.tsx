@@ -97,7 +97,7 @@ export function Header() {
           {/* Logo with icon */}
           <Link 
             href="/" 
-            className="flex items-center gap-2 font-serif font-bold text-xl text-foreground hover:text-primary transition-colors"
+            className="flex items-center gap-2 font-bold text-xl text-foreground hover:text-primary transition-colors"
           >
             <Sparkles className="h-5 w-5 text-primary" />
             <span>{siteConfig.author.name}</span>

@@ -254,12 +254,12 @@ export default function AboutPage() {
       {/* Hero - Always visible */}
       <section className="mb-10">
         <div className="flex flex-col sm:flex-row gap-6 items-start">
-          <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary font-serif font-bold text-3xl shrink-0">
+          <div className="w-20 h-20 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-3xl shrink-0">
             T
           </div>
 
           <div className="flex-1">
-            <h1 className="font-serif text-3xl sm:text-4xl font-bold text-primary mb-1">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-primary mb-1">
               {siteConfig.author.name}
             </h1>
             <p className="text-sm text-muted-foreground mb-3">
@@ -337,7 +337,7 @@ export default function AboutPage() {
 
             {/* Stacks */}
             <section>
-              <h2 className="font-serif text-lg font-bold text-foreground mb-5">
+              <h2 className="text-lg font-bold text-foreground mb-5">
                 {t('about.stacks')}
               </h2>
 
@@ -391,12 +391,9 @@ export default function AboutPage() {
 
             {/* Projects & Contributions */}
             <section>
-              <h2 className="font-serif text-lg font-bold text-foreground mb-3">
+              <h2 className="text-lg font-bold text-foreground mb-3">
                 {t('about.projects')}
               </h2>
-              <p className="text-sm text-muted-foreground font-mono mb-5">
-                <span className="opacity-50"> # </span>{t('about.projects.intro')}
-              </p>
 
 
               <div className="space-y-2">
@@ -436,7 +433,7 @@ export default function AboutPage() {
 
             {/* Philosophy */}
             <section>
-              <h2 className="font-serif text-lg font-bold text-foreground mb-4">{t('about.philosophy')}</h2>
+              <h2 className="text-lg font-bold text-foreground mb-4">{t('about.philosophy')}</h2>
               <blockquote className="border-l-2 border-primary pl-4 italic text-muted-foreground">
                 &ldquo;Simplicity is the ultimate sophistication.&rdquo;
                 <footer className="mt-1 text-sm not-italic">— Leonardo da Vinci</footer>
@@ -470,7 +467,7 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Zap className="h-4 w-4 text-primary" />
-                <h2 className="font-serif font-bold text-foreground">{t('now.focus')}</h2>
+                <h2 className="font-bold text-foreground">{t('now.focus')}</h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.focus.map((item, i) => (
@@ -485,7 +482,7 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="h-4 w-4 text-primary" />
-                <h2 className="font-serif font-bold text-foreground">{t('now.learning')}</h2>
+                <h2 className="font-bold text-foreground">{t('now.learning')}</h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.learning.map((item, i) => (
@@ -500,7 +497,7 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Code className="h-4 w-4 text-primary" />
-                <h2 className="font-serif font-bold text-foreground">{t('now.building')}</h2>
+                <h2 className="font-bold text-foreground">{t('now.building')}</h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.building.map((item, i) => (
@@ -515,7 +512,7 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Brain className="h-4 w-4 text-primary" />
-                <h2 className="font-serif font-bold text-foreground">{t('now.thinking')}</h2>
+                <h2 className="font-bold text-foreground">{t('now.thinking')}</h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.thinking.map((item, i) => (
@@ -551,7 +548,7 @@ export default function AboutPage() {
                   <section key={category.titleKey}>
                     <div className="flex items-center gap-2 mb-3">
                       <Icon className="h-4 w-4 text-primary" />
-                      <h2 className="font-serif font-bold text-foreground">{t(category.titleKey)}</h2>
+                      <h2 className="font-bold text-foreground">{t(category.titleKey)}</h2>
                     </div>
                     <ul className="space-y-3">
                       {category.items.map((item) => {
@@ -627,7 +624,7 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3 p-3 rounded-lg border border-border hover:border-primary/50 hover:bg-primary/5 transition-all"
                 >
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-serif font-bold text-lg shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-lg shrink-0">
                     {link.avatar}
                   </div>
                   <div className="flex-1 min-w-0">
