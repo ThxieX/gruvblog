@@ -394,9 +394,6 @@ export default function AboutPage() {
               <h2 className="text-lg font-bold text-foreground mb-3">
                 {t('about.projects')}
               </h2>
-              <p className="text-sm text-muted-foreground font-mono mb-5">
-                <span className="opacity-50"> # </span>{t('about.projects.intro')}
-              </p>
 
 
               <div className="space-y-2">
