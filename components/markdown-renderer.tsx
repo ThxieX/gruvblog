@@ -348,12 +348,8 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     ),
 
     li: ({ children }) => (
-      <li 
-        className="text-foreground"
-        style={{ 
-          // Use ::marker pseudo-element styling via CSS
-        }}
-      >
+      // Marker color is styled via CSS in globals.css (.prose-gruvbox li::marker)
+      <li className="text-foreground">
         {children}
       </li>
     ),
