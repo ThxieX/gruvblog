@@ -443,7 +443,7 @@ export default function AIChatPage() {
           <div className="p-2 bg-primary/10 rounded-lg">
             <Sparkles className="h-6 w-6 text-primary" />
           </div>
-          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
             {t('ai.title')}
           </h1>
         </div>

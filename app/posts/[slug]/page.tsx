@@ -101,7 +101,7 @@ export default async function PostPage({ params }: PageProps) {
         {/* Article Header */}
         <header className="mb-10">
           <h1 
-            className="font-serif text-4xl sm:text-5xl font-bold mb-4 text-balance"
+            className="text-4xl sm:text-5xl font-bold tracking-tight mb-4 text-balance"
             style={{ color: 'var(--prose-h1)' }}
           >
             {post.title}

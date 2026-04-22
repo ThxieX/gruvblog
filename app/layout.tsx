@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { Inter, Merriweather, JetBrains_Mono } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ThemeStyleProvider } from '@/lib/theme-context'
@@ -13,13 +13,6 @@ import './globals.css'
 const inter = Inter({ 
   subsets: ["latin"],
   variable: '--font-inter',
-  display: 'swap',
-})
-
-const merriweather = Merriweather({ 
-  subsets: ["latin"],
-  weight: ['300', '400', '700', '900'],
-  variable: '--font-merriweather',
   display: 'swap',
 })
 
@@ -64,7 +57,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.variable} ${merriweather.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <ThemeStyleProvider>
           <I18nProvider>
             <div className="min-h-screen flex flex-col">

@@ -440,7 +440,7 @@ function PostsPageContent() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <header className="mb-12">
-          <h1 className="font-serif text-3xl sm:text-4xl font-bold text-primary mb-4">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-primary mb-4">
             {t('posts.title')}
           </h1>
           <p className="text-muted-foreground">{t('posts.description')}</p>

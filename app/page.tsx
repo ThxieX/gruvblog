@@ -15,7 +15,7 @@ export default function Home() {
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
       {/* Hero Section */}
       <section className="mb-16">
-        <h1 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-4 text-balance">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground mb-4 text-balance">
           {t('home.greeting')} <span className="text-primary">{siteConfig.author.name}</span>
         </h1>
         <p className="text-sm text-muted-foreground mb-8">
@@ -72,7 +72,7 @@ export default function Home() {
       {/* Recent Posts */}
       <section className="mb-16">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="font-serif text-xl font-bold text-primary">
+          <h2 className="text-xl font-bold tracking-tight text-primary">
             {t('home.recentPosts')}
           </h2>
           <Link 

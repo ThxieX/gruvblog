@@ -117,16 +117,18 @@
 
 @theme inline {
   /*
-   * Font stacks use per-glyph fallback: Latin glyphs render with the primary
-   * webfont (Inter / Merriweather / JetBrains Mono), while CJK glyphs fall
-   * through to the best available OS-native Chinese font.
+   * Typography — single-family system (YC / Silicon Valley standard).
    *
-   * Notes on design choices:
-   * - `-apple-system` / `BlinkMacSystemFont` are listed first so Apple devices
-   *   pick up the system UI font metrics, which pair well with Inter.
-   * - The serif stack intentionally skips Windows' `SimSun` (poor on-screen
-   *   rendering) and falls back to a sans-serif CJK face instead — same
-   *   approach as Medium and Notion in Chinese contexts.
+   * Following the pattern of Vercel, Linear, and Stripe blogs, we use ONE
+   * typeface family (Inter) across the entire site. Visual hierarchy is
+   * established through weight, size, and letter-spacing — not by swapping
+   * typefaces. This yields consistent cross-platform output and removes a
+   * category of "English-serif + Chinese-sans" mismatches.
+   *
+   * Per-glyph fallback: Latin glyphs render with Inter (self-hosted via
+   * next/font), while CJK glyphs automatically fall through to the best
+   * OS-native Chinese face (PingFang SC on macOS, Microsoft YaHei on
+   * Windows, Noto Sans CJK SC on Android/Linux).
    */
   --font-sans:
     'Inter', 'Inter Fallback',
@@ -135,12 +137,6 @@
     'Microsoft YaHei', '微软雅黑',
     'Source Han Sans SC', 'Noto Sans CJK SC',
     system-ui, sans-serif;
-  --font-serif:
-    'Merriweather', 'Merriweather Fallback', Georgia,
-    'Source Han Serif SC', 'Noto Serif CJK SC',
-    'Songti SC',
-    'PingFang SC', 'Microsoft YaHei', '微软雅黑',
-    serif;
   --font-mono:
     'JetBrains Mono', 'JetBrains Mono Fallback',
     ui-monospace, SFMono-Regular, Menlo, Consolas,
