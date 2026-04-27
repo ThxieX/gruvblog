@@ -6,8 +6,8 @@ categories:
 tags:
   - RAG
   - LLM
-excerpt: "todo"
-aiSummary: "todo"
+excerpt: "🔍 聚焦 RAG 检索阶段的几种主流策略：从 “找到” 到 “找对”。"
+aiSummary: "聚焦 RAG 检索阶段优化，介绍四种主流策略：Hybrid Search 结合向量与关键词检索互补；HyDE 通过生成假设答案提升模糊 query 召回；Rerank 精排候选结果；Multi-hop 处理复杂多跳问题。"
 ---
 
 
@@ -16,7 +16,7 @@ aiSummary: "todo"
 >
 > 传统 RAG 依赖向量检索，而用户 Query 的复杂，模糊，多变，使得单一检索往往存在 “盲区”。
 >
-> 作为业界共识 GIGO “Garbage in, garbage out”，不仅要关注数据和索引质量，检索质量同样是关健变量。
+> 作为业界共识 GIGO “Garbage in, garbage out”，不仅要关注数据和索引质量，检索质量同样是关键变量。
 
 
 🔍 聚焦 RAG 检索阶段的几种主流优化策略：从 “找到” 到 “找对”。
@@ -106,7 +106,7 @@ HyDE（Hypothetical Document Embedding）
 
 1）传统 RAG 链路：`用户问题 -> embedding -> 检索`
 
-当问题太短 / 太模糊，以及 embeding 向量表达能力本身限制 --> 结果：召回不准确
+当问题太短 / 太模糊，以及 embedding 向量表达能力本身限制 --> 结果：召回不准确。
 
 
 2）HyDE 链路： `用户问题 -> LLM 生成一个 “假设答案” --> embedding(对假设答案) --> 检索`
@@ -141,9 +141,9 @@ HyDE（Hypothetical Document Embedding）
 
 👉 从 “全” 到 “准”：把已经召回的一堆候选，再精排一次，挑最相关。
 
-当作 RAG 召回后的补充阶段
-- Retrieval（召回阶段）：目标“全” - 尽量不漏
-- Rerank（精排阶段）：目标是“准” - 选最相关
+当作 RAG 召回后的补充阶段。
+- Retrieval（召回阶段）：目标”全” - 尽量不漏。
+- Rerank（精排阶段）：目标是”准” - 选最相关。
 
 Retrieval 阶段无论是向量 还是 BM25，本质都是在比索引 “相似度”，而非真正的“相关性”，没有真正理解 “问题 - 答案的关系”。
 
