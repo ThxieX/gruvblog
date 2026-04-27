@@ -48,8 +48,10 @@ const SPACING = {
   h6: { top: '1.25rem', bottom: '0.375rem' },// 20px / 6px  - minimal
   
   // Block element spacing
-  paragraph: '0.875rem', // 14px - tight connection for inline-flow content (e.g. text + list)
-  list: '0',             // 0 - no top margin, fully relies on previous element's marginBottom
+  // Aligned with industry standards (Vercel Blog ~24px, Linear ~24px, Tailwind prose 20px).
+  // 20px is the sweet spot: comfortable reading rhythm without feeling loose.
+  paragraph: '1.25rem',  // 20px - paragraph bottom margin, also drives p→list and p→codeblock spacing
+  list: '0',             // 0 - no top margin, fully relies on previous element's marginBottom (20px from p)
   listBottom: '1.5rem',  // 24px - list block bottom margin for separation from next element
   blockquote: '2rem',    // 32px - stand out as a distinct element
   codeBlock: '2rem',     // 32px - code blocks need clear separation
