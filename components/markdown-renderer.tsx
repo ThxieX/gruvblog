@@ -303,7 +303,7 @@ export function MarkdownRenderer({ content }: MarkdownRendererProps) {
     // ═══════════════════════════════════════════════════════════════════════
     blockquote: ({ children }) => (
       <blockquote
-        className="pl-4 rounded-r-md [&_p]:text-inherit [&_p]:mb-3 [&_p:last-child]:mb-0"
+        className="pl-4 rounded-r-md [&_p]:text-inherit [&_p]:!m-0 [&_p+p]:!mt-2"
         style={{
           marginTop: SPACING.blockquote,
           marginBottom: SPACING.blockquote,
