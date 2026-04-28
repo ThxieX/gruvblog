@@ -23,7 +23,7 @@ function pickColor(): string {
 /**
  * Confetti rain — 300 falling pieces with staggered start for a wave effect.
  */
-export function createConfetti(): void {
+function createConfetti(): void {
   const COUNT = 300
 
   for (let i = 0; i < COUNT; i++) {
@@ -77,7 +77,7 @@ export function createConfetti(): void {
 /**
  * Fireworks — 5 staggered bursts of 50 radial particles each.
  */
-export function createCelebrate(): void {
+function createCelebrate(): void {
   const BURSTS = 5
   const PARTICLES_PER_BURST = 50
   const centerX = window.innerWidth / 2
