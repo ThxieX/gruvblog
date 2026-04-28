@@ -71,7 +71,10 @@ export function CommandMenu() {
       className="sm:max-w-2xl"
     >
       <CommandInput placeholder={t('cmd.search')} />
-      <CommandList>
+      {/* Override the shadcn default `max-h-[300px]` to give results more
+          breathing room. Capped at 60vh so the menu never overflows on
+          short viewports (e.g. landscape phones, small laptops). */}
+      <CommandList className="max-h-[min(500px,60vh)]">
         <CommandEmpty>{t('cmd.noResults')}</CommandEmpty>
 
         <CommandGroup heading={t('cmd.pages')}>
