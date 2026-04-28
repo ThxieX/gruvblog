@@ -21,6 +21,7 @@ import {
   Tag,
   Folder,
   Sparkles,
+  Gift,
 } from 'lucide-react'
 import { getPosts, getCategories, getTags } from '@/lib/blog-data'
 import { useI18n } from '@/lib/i18n-context'
@@ -63,7 +64,12 @@ export function CommandMenu() {
   }
 
   return (
-    <CommandDialog open={open} onOpenChange={setOpen} filter={scoreItem}>
+    <CommandDialog
+      open={open}
+      onOpenChange={setOpen}
+      filter={scoreItem}
+      className="sm:max-w-2xl"
+    >
       <CommandInput placeholder={t('cmd.search')} />
       <CommandList>
         <CommandEmpty>{t('cmd.noResults')}</CommandEmpty>
@@ -106,14 +112,15 @@ export function CommandMenu() {
             <Sparkles className="mr-2 h-4 w-4" />
             <span>{t('ai.title')}</span>
           </CommandItem>
-          {/* Hidden easter egg: a bare emoji item with no searchable text.
-              Discoverable only by visually scanning the menu — cannot be
-              found by typing, regardless of locale. */}
+          {/* Hidden easter egg: emoji-only label (no localized text) so the
+              item is discoverable only by visually scanning the menu and
+              cannot be reached via search, regardless of locale. */}
           <CommandItem
-            value="🎉"
+            value="🎉 🎉 🎉"
             onSelect={() => runCommand(() => triggerSurprise())}
           >
-            <span>🎉</span>
+            <Gift className="mr-2 h-4 w-4" />
+            <span>🎉 🎉 🎉</span>
           </CommandItem>
         </CommandGroup>
 
