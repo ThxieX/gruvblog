@@ -21,7 +21,6 @@ import {
   Tag,
   Folder,
   Sparkles,
-  Gift,
 } from 'lucide-react'
 import { getPosts, getCategories, getTags } from '@/lib/blog-data'
 import { useI18n } from '@/lib/i18n-context'
@@ -86,10 +85,35 @@ export function CommandMenu() {
 
         <CommandSeparator />
 
-        <CommandGroup heading={t('cmd.easterEgg')}>
-          <CommandItem onSelect={() => runCommand(() => triggerSurprise())}>
-            <Gift className="mr-2 h-4 w-4" />
-            <span>{t('cmd.surprise')}</span>
+        <CommandGroup heading={t('cmd.actions')}>
+          <CommandItem
+            value={t('cmd.toggleTheme')}
+            onSelect={() =>
+              runCommand(() => setTheme(theme === 'dark' ? 'light' : 'dark'))
+            }
+          >
+            {theme === 'dark' ? (
+              <Sun className="mr-2 h-4 w-4" />
+            ) : (
+              <Moon className="mr-2 h-4 w-4" />
+            )}
+            <span>{t('cmd.toggleTheme')}</span>
+          </CommandItem>
+          <CommandItem
+            value={t('ai.title')}
+            onSelect={() => runCommand(() => router.push('/ai'))}
+          >
+            <Sparkles className="mr-2 h-4 w-4" />
+            <span>{t('ai.title')}</span>
+          </CommandItem>
+          {/* Hidden easter egg: a bare emoji item with no searchable text.
+              Discoverable only by visually scanning the menu — cannot be
+              found by typing, regardless of locale. */}
+          <CommandItem
+            value="🎉"
+            onSelect={() => runCommand(() => triggerSurprise())}
+          >
+            <span>🎉</span>
           </CommandItem>
         </CommandGroup>
 
@@ -163,32 +187,6 @@ export function CommandMenu() {
           ))}
         </CommandGroup>
 
-        <CommandSeparator />
-
-        <CommandGroup heading={t('cmd.ai')}>
-          <CommandItem onSelect={() => runCommand(() => router.push('/ai'))}>
-            <Sparkles className="mr-2 h-4 w-4" />
-            <span>{t('ai.title')}</span>
-          </CommandItem>
-        </CommandGroup>
-
-        <CommandSeparator />
-
-        <CommandGroup heading={t('cmd.actions')}>
-          <CommandItem
-            value={t('cmd.toggleTheme')}
-            onSelect={() =>
-              runCommand(() => setTheme(theme === 'dark' ? 'light' : 'dark'))
-            }
-          >
-            {theme === 'dark' ? (
-              <Sun className="mr-2 h-4 w-4" />
-            ) : (
-              <Moon className="mr-2 h-4 w-4" />
-            )}
-            <span>{t('cmd.toggleTheme')}</span>
-          </CommandItem>
-        </CommandGroup>
       </CommandList>
     </CommandDialog>
   )
