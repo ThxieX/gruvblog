@@ -217,15 +217,39 @@ export function CommandMenu() {
         <CommandSeparator />
 
         <CommandGroup heading={t('cmd.posts')}>
-          {posts.slice(0, 5).map((post) => (
-            <CommandItem
-              key={post.slug}
-              onSelect={() => runCommand(() => router.push(`/posts/${post.slug}`))}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              <span>{post.title}</span>
-            </CommandItem>
-          ))}
+          {posts.map((post) => {
+            // Build a searchable value covering title, tags, categories, excerpt and AI summary.
+            // cmdk filters items by their `value` prop (falling back to text content),
+            // so anything we put here becomes searchable while only the title is visible.
+            const searchableValue = [
+              post.title,
+              post.category,
+              ...post.categories,
+              ...post.tags,
+              post.excerpt,
+              post.aiSummary ?? '',
+            ]
+              .filter(Boolean)
+              .join(' ')
+
+            const metaLabel = post.categories[0] ?? post.category
+
+            return (
+              <CommandItem
+                key={post.slug}
+                value={`${searchableValue} ${post.slug}`}
+                onSelect={() => runCommand(() => router.push(`/posts/${post.slug}`))}
+              >
+                <FileText className="mr-2 h-4 w-4 shrink-0" />
+                <span className="truncate">{post.title}</span>
+                {metaLabel && (
+                  <span className="ml-auto pl-2 text-xs text-muted-foreground shrink-0">
+                    {metaLabel}
+                  </span>
+                )}
+              </CommandItem>
+            )
+          })}
         </CommandGroup>
 
         <CommandSeparator />
