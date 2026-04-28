@@ -124,8 +124,8 @@ export default async function PostPage({ params }: PageProps) {
 
         {/* AI Summary */}
         {post.aiSummary && (
-          <div className="mb-10 p-4 bg-primary/5 border border-primary/20 rounded-lg">
-            <div className="flex items-center gap-2 text-primary mb-2">
+          <div className="mb-10 p-4 bg-accent/10 border border-accent/30 rounded-lg">
+            <div className="flex items-center gap-2 text-accent mb-2">
               <Sparkles className="h-4 w-4" />
               <AiSummaryLabel />
             </div>
