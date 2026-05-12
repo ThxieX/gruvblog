@@ -167,40 +167,10 @@ const projects = [
 // Links data
 const links = [
   {
-    name: 'Dan Abramov',
-    description: 'React core team, creator of Redux',
-    url: 'https://overreacted.io/',
-    avatar: 'D',
-  },
-  {
-    name: 'Josh Comeau',
-    description: 'CSS wizard, educator',
-    url: 'https://www.joshwcomeau.com/',
-    avatar: 'J',
-  },
-  {
-    name: 'Lee Robinson',
-    description: 'VP of DX at Vercel',
-    url: 'https://leerob.io/',
-    avatar: 'L',
-  },
-  {
-    name: 'Tania Rascia',
-    description: 'Full-stack developer, writer',
-    url: 'https://www.taniarascia.com/',
-    avatar: 'T',
-  },
-  {
-    name: 'Kent C. Dodds',
-    description: 'Testing expert, educator',
-    url: 'https://kentcdodds.com/',
-    avatar: 'K',
-  },
-  {
-    name: 'Wes Bos',
-    description: 'Web developer, course creator',
-    url: 'https://wesbos.com/',
-    avatar: 'W',
+    name: 'mmguo',
+    description: 'Interfaces for AI products, creating entirely new experiences.',
+    url: 'https://mmguo.dev/',
+    avatar: 'M',
   },
   {
     name: 'Takuya Matsuyama',
