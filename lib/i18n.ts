@@ -37,6 +37,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'home.justforfun': '✨ Just for fun ! ',
     'home.recentPosts': 'Recent Posts',
     'home.viewAll': 'View all posts',
+    'home.exploreMore': 'Explore all posts',
+    'home.morePostsHint': 'Discover more thoughts and stories',
 
     // Posts
     'posts.title': 'Posts',
@@ -146,6 +148,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'home.subtitle': 'AI ｜ 簡單主義 ｜ 後語言時代程序員',
     'home.recentPosts': '最新文章',
     'home.viewAll': '查看全部',
+    'home.exploreMore': '浏览全部文章',
+    'home.morePostsHint': '发现更多思考与故事',
 
     // Posts
     'posts.title': '文章',
@@ -235,6 +239,8 @@ export const translations: Record<Locale, Record<string, string>> = {
     'home.subtitle': 'AI | シンプル｜ポスト言語時代のエンジニア',
     'home.recentPosts': '最新記事',
     'home.viewAll': 'すべて見る',
+    'home.exploreMore': 'すべての記事を見る',
+    'home.morePostsHint': 'もっと多くの思考とストーリーを発見',
 
     // Posts
     'posts.title': '記事',

@@ -88,6 +88,20 @@ export default function Home() {
             <PostCard key={post.slug} post={post} />
           ))}
         </div>
+        
+        {/* Bottom CTA - 避免用户滚动到底部后找不到入口 */}
+        <div className="mt-10 pt-8 border-t border-border/50">
+          <Link 
+            href="/posts"
+            className="group flex items-center justify-center gap-2 py-3 px-6 mx-auto w-fit rounded-lg bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground transition-all duration-200"
+          >
+            <span className="text-sm font-medium">{t('home.exploreMore')}</span>
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5 transition-transform" />
+          </Link>
+          <p className="text-center text-xs text-muted-foreground/60 mt-3">
+            {t('home.morePostsHint')}
+          </p>
+        </div>
       </section>
 
     
