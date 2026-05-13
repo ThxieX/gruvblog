@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import { useState, useEffect } from "react";
+import Link from "next/link";
 import {
   Github,
   Twitter,
@@ -20,204 +20,296 @@ import {
   Cat,
   ExternalLink,
   Heart,
-  Users
-} from 'lucide-react'
-import { cn } from '@/lib/utils'
-import { useI18n } from '@/lib/i18n-context'
-import { siteConfig } from '@/lib/config'
+  Users,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n-context";
+import { siteConfig } from "@/lib/config";
 
 // Core competencies organized by category
 const coreStacks = [
   {
-    category: 'Backend',
-    icon: 'openjdk',
+    category: "Backend",
+    icon: "openjdk",
     items: [
-      { name: 'Java', icon: 'openjdk' },
-      { name: 'Golang', icon: 'GoLand' },
-      { name: 'Python', icon: 'python' },
-      { name: 'MySQL', icon: 'mysql' },
-      { name: 'Redis', icon: 'redis' },
-      { name: 'MQ', icon: 'apacherocketmq' },
+      { name: "Java", icon: "openjdk" },
+      { name: "Golang", icon: "GoLand" },
+      { name: "Python", icon: "python" },
+      { name: "MySQL", icon: "mysql" },
+      { name: "Redis", icon: "redis" },
+      { name: "MQ", icon: "apacherocketmq" },
     ],
   },
   {
-    category: 'Architecture',
-    icon: 'databricks',
+    category: "Architecture",
+    icon: "databricks",
     items: [
-      { name: 'Microservices', icon: 'kubernetes' },
-      { name: 'System Design', icon: 'cloudflare' },
-      { name: 'High Availability', icon: 'amazonelaticloadbalancing' },
+      { name: "Microservices", icon: "kubernetes" },
+      { name: "System Design", icon: "cloudflare" },
+      { name: "High Availability", icon: "amazonelaticloadbalancing" },
     ],
   },
   {
-    category: 'Build',
-    icon: 'docker',
+    category: "Build",
+    icon: "docker",
     items: [
-      { name: 'Docker', icon: 'docker' },
-      { name: 'Vercel', icon: 'vercel' },
-      { name: 'K8s', icon: 'kubernetes' },
-      { name: 'CI/CD', icon: 'githubactions' },
+      { name: "Docker", icon: "docker" },
+      { name: "Vercel", icon: "vercel" },
+      { name: "K8s", icon: "kubernetes" },
+      { name: "CI/CD", icon: "githubactions" },
     ],
   },
-]
+];
 
 const timeline = [
   {
-    year: '2024',
-    titleKey: 'AI Research & Development',
-    descriptionKey: 'Building AI-powered applications and exploring the frontiers of LLM capabilities.',
+    year: "2024",
+    titleKey: "AI Research & Development",
+    descriptionKey:
+      "Building AI-powered applications and exploring the frontiers of LLM capabilities.",
   },
   {
-    year: '2022',
-    titleKey: 'Full-Stack Engineering',
-    descriptionKey: 'Developing web applications with a focus on performance and user experience.',
+    year: "2022",
+    titleKey: "Full-Stack Engineering",
+    descriptionKey:
+      "Developing web applications with a focus on performance and user experience.",
   },
   {
-    year: '2020',
-    titleKey: 'Started Programming Journey',
-    descriptionKey: 'Fell in love with code and the art of building software.',
+    year: "2020",
+    titleKey: "Started Programming Journey",
+    descriptionKey: "Fell in love with code and the art of building software.",
   },
-]
+];
 
 const nowItems = {
   focus: [
-    'Building AI-powered developer tools that enhance productivity without adding complexity',
-
+    "Building AI-powered developer tools that enhance productivity without adding complexity",
   ],
-  learning: [
-    'Slowly but consistently, using Anki and immersion',
-  ],
+  learning: ["Slowly but consistently, using Anki and immersion"],
   building: [
-    'A personal knowledge management system with AI-assisted note connections（Obsidian CLI With AI）',
-    'This blog - as a digital garden for ideas and technical explorations',
+    "A personal knowledge management system with AI-assisted note connections（Obsidian CLI With AI）",
+    "This blog - as a digital garden for ideas and technical explorations",
   ],
   thinking: [
-    'How to maintain focus in an age of infinite distractions',
-    'Exploring the intersection of LLMs and code generation',
+    "How to maintain focus in an age of infinite distractions",
+    "Exploring the intersection of LLMs and code generation",
   ],
-}
+};
 
 interface Tool {
-  name: string
-  description: string
-  url?: string
-  icon?: string // Simple Icons slug
-  lucideIcon?: 'keyboard' | 'monitor' | 'cat' // Fallback for brands not in Simple Icons
+  name: string;
+  description: string;
+  url?: string;
+  icon?: string; // Simple Icons slug
+  lucideIcon?: "keyboard" | "monitor" | "cat"; // Fallback for brands not in Simple Icons
 }
 
 const usesCategories = [
   {
     icon: MonitorSmartphone,
-    titleKey: 'uses.hardware',
+    titleKey: "uses.hardware",
     items: [
-      { name: 'MacBook Pro (Apple Silicon)', description: 'Primary development machine', icon: 'apple' },
-      { name: 'iPhone', description: 'Mobile development & testing', icon: 'ios' },
-      { name: 'Keyboard Nuphy Air', description: 'Previous: TKL, WASD CODE, Keychron k3', url: 'https://happyhackingkb.com/', lucideIcon: 'keyboard' },
-      { name: 'BenQ EW 28" 4K Monitor', description: 'Secondary display for docs', url: 'https://www.benq.com/zh-tw/monitor/home/ew2880u.html', lucideIcon: 'monitor' },
+      {
+        name: "MacBook Pro (Apple Silicon)",
+        description: "Primary development machine",
+        icon: "apple",
+      },
+      {
+        name: "iPhone",
+        description: "Mobile development & testing",
+        icon: "ios",
+      },
+      {
+        name: "Keyboard Nuphy Air",
+        description: "Previous: TKL, WASD CODE, Keychron k3",
+        url: "https://happyhackingkb.com/",
+        lucideIcon: "keyboard",
+      },
+      {
+        name: 'BenQ EW 28" 4K Monitor',
+        description: "Secondary display for docs",
+        url: "https://www.benq.com/zh-tw/monitor/home/ew2880u.html",
+        lucideIcon: "monitor",
+      },
     ] as Tool[],
   },
   {
     icon: Code,
-    titleKey: 'uses.editor',
+    titleKey: "uses.editor",
     items: [
-      { name: 'JetBrains', description: 'A rich suite of tools', url: 'https://jetbrains.com/', icon: 'jetbrains' },
-      { name: 'Zed', description: 'Minimal and crafted editor', url: 'https://zed.dev/', icon: 'zedindustries' },
-      { name: 'Neovim', description: 'Secondary editor with LazyVim', url: 'https://neovim.io/', icon: 'neovim' },
-      { name: 'Gruvbox Theme', description: 'Warm, retro colors', url: 'https://github.com/morhetz/gruvbox' },
+      {
+        name: "JetBrains",
+        description: "A rich suite of tools",
+        url: "https://jetbrains.com/",
+        icon: "jetbrains",
+      },
+      {
+        name: "Zed",
+        description: "Minimal and crafted editor",
+        url: "https://zed.dev/",
+        icon: "zedindustries",
+      },
+      {
+        name: "Neovim",
+        description: "Secondary editor with kickstart.nvim",
+        url: "https://neovim.io/",
+        icon: "neovim",
+      },
+      {
+        name: "Gruvbox Theme",
+        description: "Warm, retro colors",
+        url: "https://github.com/morhetz/gruvbox",
+      },
     ] as Tool[],
   },
   {
     icon: Terminal,
-    titleKey: 'uses.terminal',
+    titleKey: "uses.terminal",
     items: [
-      { name: 'Kitty', description: 'Primary terminal, GPU-rendered', url: 'https://sw.kovidgoyal.net/kitty/', lucideIcon: 'cat' },
-      { name: 'Warp', description: 'Secondary, AI-powered', url: 'https://warp.dev/', icon: 'warp' },
-      { name: 'zsh + Starship', description: 'Shell with minimal prompt', url: 'https://starship.rs/', icon: 'starship' },
-      { name: 'yazi + fzf + zoxide + tmux', description: 'Session & fuzzy navigation', icon: 'tmux' },
+      {
+        name: "Kitty",
+        description: "Primary terminal, GPU-rendered",
+        url: "https://sw.kovidgoyal.net/kitty/",
+        lucideIcon: "cat",
+      },
+      {
+        name: "Warp",
+        description: "Secondary, AI-powered",
+        url: "https://warp.dev/",
+        icon: "warp",
+      },
+      {
+        name: "zsh + Starship",
+        description: "Shell with minimal prompt",
+        url: "https://starship.rs/",
+        icon: "starship",
+      },
+      {
+        name: "yazi + fzf + zoxide + tmux",
+        description: "Session & fuzzy navigation",
+        icon: "tmux",
+      },
     ] as Tool[],
   },
   {
     icon: Keyboard,
-    titleKey: 'uses.apps',
+    titleKey: "uses.apps",
     items: [
-      { name: 'Raycast', description: 'Launcher & automation', url: 'https://www.raycast.com/', icon: 'raycast' },
-      { name: 'Obsidian', description: 'Knowledge management', url: 'https://obsidian.md/', icon: 'obsidian' },
-      { name: 'Arc Browser', description: 'Modern tab management', url: 'https://arc.net/', icon: 'arc' },
+      {
+        name: "Raycast",
+        description: "Launcher & automation",
+        url: "https://www.raycast.com/",
+        icon: "raycast",
+      },
+      {
+        name: "Obsidian",
+        description: "Knowledge management",
+        url: "https://obsidian.md/",
+        icon: "obsidian",
+      },
+      {
+        name: "Arc Browser",
+        description: "Modern tab management",
+        url: "https://arc.net/",
+        icon: "arc",
+      },
     ] as Tool[],
   },
 
   {
     icon: Music,
-    titleKey: 'uses.entertainment',
+    titleKey: "uses.entertainment",
     items: [
-      { name: 'Van Gogh AG15, Dove dd260s', description: 'Music player', icon: 'guitarpro' },
-      { name: 'Zoom H6, IQ7', description: 'Previous: Zoom IQ7, Zoom H6', url: "https://zoomcorp.com/", icon: 'zoom' },
+      {
+        name: "Van Gogh AG15, Dove dd260s",
+        description: "Music player",
+        icon: "guitarpro",
+      },
+      {
+        name: "Zoom H6, IQ7",
+        description: "Previous: Zoom IQ7, Zoom H6",
+        url: "https://zoomcorp.com/",
+        icon: "zoom",
+      },
     ] as Tool[],
   },
-]
+];
 
 // Projects & Contributions data
 const projects = [
   {
-    name: 'edgex-ui-go',
-    repo: 'edgexfoundry/edgex-ui-go',
+    name: "edgex-ui-go",
+    repo: "edgexfoundry/edgex-ui-go",
   },
-]
+  {
+    name: "Gruvblog",
+    repo: "ThxieX/gruvblog",
+  },
+  {
+    name: "VimDojo",
+    repo: "ThxieX/VimDojo",
+  },
+];
 
 // Links data
 const links = [
   {
-    name: 'mmguo',
-    description: 'Interfaces for AI products, creating entirely new experiences.',
-    url: 'https://mmguo.dev/',
-    avatar: 'M',
+    name: "mmguo",
+    description:
+      "Interfaces for AI products, creating entirely new experiences.",
+    url: "https://mmguo.dev/",
+    avatar: "M",
   },
   {
-    name: 'Takuya Matsuyama',
-    description: 'devaslife, indie hacker & Inkdrop creator',
-    url: 'https://www.craftz.dog/',
-    avatar: 'T',
+    name: "Takuya Matsuyama",
+    description: "devaslife, indie hacker & Inkdrop creator",
+    url: "https://www.craftz.dog/",
+    avatar: "T",
   },
-]
+];
 
-type TabType = 'about' | 'now' | 'uses' | 'links'
+type TabType = "about" | "now" | "uses" | "links";
 
-const VALID_TABS = ['about', 'now', 'uses', 'links'] as const
+const VALID_TABS = ["about", "now", "uses", "links"] as const;
 
 function getTabFromHash(): TabType {
-  if (typeof window === 'undefined') return 'about'
-  const hash = window.location.hash.slice(1).toLowerCase()
-  return VALID_TABS.includes(hash as TabType) ? (hash as TabType) : 'about'
+  if (typeof window === "undefined") return "about";
+  const hash = window.location.hash.slice(1).toLowerCase();
+  return VALID_TABS.includes(hash as TabType) ? (hash as TabType) : "about";
 }
 
 export default function AboutPage() {
-  const [activeTab, setActiveTab] = useState<TabType>('about')
-  const lastUpdated = '2024-01-15'
-  const { t } = useI18n()
+  const [activeTab, setActiveTab] = useState<TabType>("about");
+  const lastUpdated = "2024-01-15";
+  const { t } = useI18n();
 
   // Sync tab state with URL hash
   useEffect(() => {
     // Set initial tab from hash
-    setActiveTab(getTabFromHash())
+    setActiveTab(getTabFromHash());
 
     // Listen for hash changes (browser back/forward)
-    const onHashChange = () => setActiveTab(getTabFromHash())
-    window.addEventListener('hashchange', onHashChange)
-    return () => window.removeEventListener('hashchange', onHashChange)
-  }, [])
+    const onHashChange = () => setActiveTab(getTabFromHash());
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   // Update URL hash when tab changes (without triggering hashchange)
   const handleTabChange = (tab: TabType) => {
-    setActiveTab(tab)
-    window.history.replaceState(null, '', tab === 'about' ? '/about' : `#${tab}`)
-  }
+    setActiveTab(tab);
+    window.history.replaceState(
+      null,
+      "",
+      tab === "about" ? "/about" : `#${tab}`,
+    );
+  };
 
   const tabs = [
-    { id: 'about' as TabType, label: t('about.tab.about') },
-    { id: 'now' as TabType, label: t('about.tab.now') },
-    { id: 'uses' as TabType, label: t('about.tab.uses') },
-    { id: 'links' as TabType, label: t('about.tab.links') },
-  ]
+    { id: "about" as TabType, label: t("about.tab.about") },
+    { id: "now" as TabType, label: t("about.tab.now") },
+    { id: "uses" as TabType, label: t("about.tab.uses") },
+    { id: "links" as TabType, label: t("about.tab.links") },
+  ];
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
@@ -233,7 +325,7 @@ export default function AboutPage() {
               {siteConfig.author.name}
             </h1>
             <p className="text-sm text-muted-foreground mb-3">
-              {t('home.subtitle')}
+              {t("home.subtitle")}
             </p>
 
             <div className="flex items-center gap-4">
@@ -278,7 +370,7 @@ export default function AboutPage() {
                 "pb-3 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap",
                 activeTab === tab.id
                   ? "border-primary text-foreground"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-border",
               )}
             >
               {tab.label}
@@ -290,25 +382,27 @@ export default function AboutPage() {
       {/* Tab Content */}
       <div className="min-h-[500px]">
         {/* About Tab */}
-        {activeTab === 'about' && (
+        {activeTab === "about" && (
           <div className="space-y-12 animate-in fade-in duration-300">
             {/* Bio */}
             <section>
               <p className="text-lg leading-relaxed mb-4 text-foreground">
-                {t('about.bio.intro')}
+                {t("about.bio.intro")}
               </p>
               <p className="text-sm text-muted-foreground font-mono mb-1">
-                <span className="opacity-50"># </span>{t('about.bio.line1')}
+                <span className="opacity-50"># </span>
+                {t("about.bio.line1")}
               </p>
               <p className="text-sm text-muted-foreground font-mono">
-                <span className="opacity-50"> # </span>{t('about.bio.line2')}
+                <span className="opacity-50"> # </span>
+                {t("about.bio.line2")}
               </p>
             </section>
 
             {/* Stacks */}
             <section>
               <h2 className="text-lg font-bold text-foreground mb-5">
-                {t('about.stacks')}
+                {t("about.stacks")}
               </h2>
 
               {/* Part 1: Core Competencies by Category */}
@@ -321,7 +415,9 @@ export default function AboutPage() {
                         alt=""
                         className="h-4 w-4 opacity-60 dark:invert dark:brightness-90"
                       />
-                      <span className="text-sm font-medium text-foreground">{stack.category}</span>
+                      <span className="text-sm font-medium text-foreground">
+                        {stack.category}
+                      </span>
                     </div>
                     <div className="flex flex-wrap gap-1 pl-6">
                       {stack.items.map((item) => (
@@ -345,16 +441,23 @@ export default function AboutPage() {
               {/* Part 2: AI Philosophy - How I Work */}
               <div className="ai-shimmer group relative p-5 bg-card border border-border rounded-lg transition-all duration-300 hover:border-primary/50 hover:shadow-[0_0_20px_rgba(254,128,25,0.15)]">
                 {/* Intro */}
-                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">{t('about.stacks.subtitle')}</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">
+                  {t("about.stacks.subtitle")}
+                </p>
 
                 {/* Formula */}
                 <p className="font-mono text-base text-foreground mb-3">
-                  Skills = <span className="text-muted-foreground">Core Logic</span> <span className="mx-1">x</span> <span className="font-medium">AI Proficiency</span>
+                  Skills ={" "}
+                  <span className="text-muted-foreground">Core Logic</span>{" "}
+                  <span className="mx-1">x</span>{" "}
+                  <span className="font-medium">AI Proficiency</span>
                 </p>
 
                 {/* Description */}
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Not limited by tools. I focus on leveraging AI to adapt, learn, explore, design, and build beyond my core stacks and across domains.
+                  Not limited by tools. I focus on leveraging AI to adapt,
+                  learn, explore, design, and build beyond my core stacks and
+                  across domains.
                 </p>
               </div>
             </section>
@@ -362,9 +465,8 @@ export default function AboutPage() {
             {/* Projects & Contributions */}
             <section>
               <h2 className="text-lg font-bold text-foreground mb-3">
-                {t('about.projects')}
+                {t("about.projects")}
               </h2>
-
 
               <div className="space-y-2">
                 {projects.map((project) => (
@@ -403,22 +505,25 @@ export default function AboutPage() {
 
             {/* Philosophy */}
             <section>
-              <h2 className="text-lg font-bold text-foreground mb-4">{t('about.philosophy')}</h2>
+              <h2 className="text-lg font-bold text-foreground mb-4">
+                {t("about.philosophy")}
+              </h2>
               <blockquote className="border-l-2 border-primary pl-4 italic text-muted-foreground">
                 &ldquo;Simplicity is the ultimate sophistication.&rdquo;
-                <footer className="mt-1 text-sm not-italic">— Leonardo da Vinci</footer>
+                <footer className="mt-1 text-sm not-italic">
+                  — Leonardo da Vinci
+                </footer>
               </blockquote>
             </section>
           </div>
         )}
 
         {/* Now Tab */}
-        {activeTab === 'now' && (
+        {activeTab === "now" && (
           <div className="space-y-10 animate-in fade-in duration-300">
             <div className="flex items-center gap-4 text-sm text-muted-foreground pb-4 border-b border-border">
-
               <p className="text-muted-foreground text-sm">
-                {t('now.description').split('now page')[0]}
+                {t("now.description").split("now page")[0]}
                 <a
                   href="https://nownownow.com/about"
                   target="_blank"
@@ -427,17 +532,14 @@ export default function AboutPage() {
                 >
                   now page
                 </a>
-                {t('now.description').split('now page')[1] || ''}
+                {t("now.description").split("now page")[1] || ""}
               </p>
-
             </div>
-
-
 
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Zap className="h-4 w-4 text-primary" />
-                <h2 className="font-bold text-foreground">{t('now.focus')}</h2>
+                <h2 className="font-bold text-foreground">{t("now.focus")}</h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.focus.map((item, i) => (
@@ -452,7 +554,9 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <BookOpen className="h-4 w-4 text-primary" />
-                <h2 className="font-bold text-foreground">{t('now.learning')}</h2>
+                <h2 className="font-bold text-foreground">
+                  {t("now.learning")}
+                </h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.learning.map((item, i) => (
@@ -467,7 +571,9 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Code className="h-4 w-4 text-primary" />
-                <h2 className="font-bold text-foreground">{t('now.building')}</h2>
+                <h2 className="font-bold text-foreground">
+                  {t("now.building")}
+                </h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.building.map((item, i) => (
@@ -482,7 +588,9 @@ export default function AboutPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <Brain className="h-4 w-4 text-primary" />
-                <h2 className="font-bold text-foreground">{t('now.thinking')}</h2>
+                <h2 className="font-bold text-foreground">
+                  {t("now.thinking")}
+                </h2>
               </div>
               <ul className="space-y-2">
                 {nowItems.thinking.map((item, i) => (
@@ -497,10 +605,10 @@ export default function AboutPage() {
         )}
 
         {/* Uses Tab */}
-        {activeTab === 'uses' && (
+        {activeTab === "uses" && (
           <div className="space-y-10 animate-in fade-in duration-300">
             <p className="text-muted-foreground text-sm pb-4 border-b border-border">
-              {t('uses.description')}{' '}
+              {t("uses.description")}{" "}
               <a
                 href="https://uses.tech/"
                 target="_blank"
@@ -508,23 +616,36 @@ export default function AboutPage() {
                 className="text-primary hover:underline"
               >
                 uses.tech
-              </a>.
+              </a>
+              .
             </p>
 
             <div className="grid gap-8 sm:grid-cols-2">
               {usesCategories.map((category) => {
-                const Icon = category.icon
+                const Icon = category.icon;
                 return (
                   <section key={category.titleKey}>
                     <div className="flex items-center gap-2 mb-3">
                       <Icon className="h-4 w-4 text-primary" />
-                      <h2 className="font-bold text-foreground">{t(category.titleKey)}</h2>
+                      <h2 className="font-bold text-foreground">
+                        {t(category.titleKey)}
+                      </h2>
                     </div>
                     <ul className="space-y-3">
                       {category.items.map((item) => {
-                        const LucideIcon = item.lucideIcon === 'keyboard' ? Keyboard : item.lucideIcon === 'monitor' ? Monitor : item.lucideIcon === 'cat' ? Cat : null
+                        const LucideIcon =
+                          item.lucideIcon === "keyboard"
+                            ? Keyboard
+                            : item.lucideIcon === "monitor"
+                              ? Monitor
+                              : item.lucideIcon === "cat"
+                                ? Cat
+                                : null;
                         return (
-                          <li key={item.name} className="group flex items-start gap-2">
+                          <li
+                            key={item.name}
+                            className="group flex items-start gap-2"
+                          >
                             {item.icon ? (
                               <img
                                 src={`https://cdn.simpleicons.org/${item.icon}`}
@@ -546,24 +667,30 @@ export default function AboutPage() {
                                   <ExternalLink className="h-3 w-3 opacity-40" />
                                 </a>
                               ) : (
-                                <span className="text-sm font-medium text-foreground">{item.name}</span>
+                                <span className="text-sm font-medium text-foreground">
+                                  {item.name}
+                                </span>
                               )}
-                              <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                              <p className="text-xs text-muted-foreground mt-0.5">
+                                {item.description}
+                              </p>
                             </div>
                           </li>
-                        )
+                        );
                       })}
                     </ul>
                   </section>
-                )
+                );
               })}
             </div>
 
             {/* Dotfiles */}
             <section className="p-4 bg-card border border-border rounded-lg">
-              <h3 className="font-medium text-foreground text-sm mb-1">{t('uses.dotfiles')}</h3>
+              <h3 className="font-medium text-foreground text-sm mb-1">
+                {t("uses.dotfiles")}
+              </h3>
               <p className="text-xs text-muted-foreground mb-2">
-                {t('uses.dotfiles.description')}
+                {t("uses.dotfiles.description")}
               </p>
               <a
                 href={`${siteConfig.author.github}/dotfiles`}
@@ -572,17 +699,17 @@ export default function AboutPage() {
                 className="inline-flex items-center gap-1 text-xs text-primary hover:underline"
               >
                 <Code className="h-3 w-3" />
-                {siteConfig.author.github.replace('https://', '')}/dotfiles
+                {siteConfig.author.github.replace("https://", "")}/dotfiles
               </a>
             </section>
           </div>
         )}
 
         {/* Links Tab */}
-        {activeTab === 'links' && (
+        {activeTab === "links" && (
           <div className="space-y-8 animate-in fade-in duration-300">
             <p className="text-muted-foreground text-sm pb-4 border-b border-border">
-              {t('links.description')}
+              {t("links.description")}
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -619,9 +746,11 @@ export default function AboutPage() {
                   <Users className="h-4 w-4 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-medium text-foreground text-sm mb-1">{t('links.apply')}</h3>
+                  <h3 className="font-medium text-foreground text-sm mb-1">
+                    {t("links.apply")}
+                  </h3>
                   <p className="text-xs text-muted-foreground mb-2">
-                    {t('links.apply.description')}
+                    {t("links.apply.description")}
                   </p>
                   <a
                     href={`mailto:${siteConfig.author.email}?subject=Friend Link Exchange`}
@@ -641,9 +770,11 @@ export default function AboutPage() {
       <section className="mt-12 pt-8 border-t border-border">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="font-medium text-foreground mb-1">{t('about.connect')}</h2>
+            <h2 className="font-medium text-foreground mb-1">
+              {t("about.connect")}
+            </h2>
             <p className="text-sm text-muted-foreground">
-              {t('about.connect.description')}
+              {t("about.connect.description")}
             </p>
           </div>
           <div className="flex gap-2">
@@ -667,5 +798,5 @@ export default function AboutPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }
